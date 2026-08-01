@@ -1,0 +1,739 @@
+<template>
+  <div class="admin-settings">
+    <!-- Header -->
+    <div class="settings-header animate-fade-in">
+      <div>
+        <h1 class="page-title">Console Settings</h1>
+        <p class="page-subtitle">Configure site metadata, shipping policies, banner announcements and gates.</p>
+      </div>
+    </div>
+
+    <!-- Form Area -->
+    <form @submit.prevent="saveSettings" class="settings-grid animate-fade-in">
+      
+      <!-- General Brand settings -->
+      <div class="admin-card span-6">
+        <h2 class="admin-card-title">GENERAL STORE PROFILE</h2>
+        <div class="card-form">
+          <div class="form-group">
+            <label class="form-label">STORE BRAND NAME</label>
+            <input v-model="settings.storeName" type="text" class="form-input" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">TAGLINE / HEADER SUBTITLE</label>
+            <input v-model="settings.tagline" type="text" class="form-input" required />
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="admin-card span-6">
+        <h2 class="admin-card-title">CONTACT INFORMATION</h2>
+        <p class="admin-card-subtitle">These details appear on your homepage contact section and footer.</p>
+        <div class="card-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">SUPPORT EMAIL</label>
+              <input v-model="settings.supportEmail" type="email" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">STORE TELEPHONE</label>
+              <input v-model="settings.telephone" type="text" class="form-input" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">BUSINESS HOURS</label>
+            <input v-model="settings.businessHours" type="text" class="form-input" placeholder="e.g. Mon – Fri, 9am – 6pm" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">STORE / CONTACT ADDRESS</label>
+            <input v-model="settings.contactAddress" type="text" class="form-input" placeholder="e.g. 12 Fashion Ave, Lagos, Nigeria" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">RESPONSE TIME MESSAGE</label>
+            <input v-model="settings.responseTime" type="text" class="form-input" placeholder="e.g. Response within 24 hours" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              WHATSAPP NUMBER
+              <span class="wa-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                Floating chat button
+              </span>
+            </label>
+            <input v-model="settings.whatsappNumber" type="text" class="form-input" placeholder="e.g. 2348012345678 (with country code, no +)" />
+            <p class="form-hint">Include country code without the + sign. Leave blank to hide the button.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping & Fulfilment settings -->
+      <div class="admin-card span-6">
+        <h2 class="admin-card-title">DELIVERY & CHECKOUT RULES</h2>
+        <div class="card-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">FREE SHIPPING THRESHOLD ($)</label>
+              <input v-model.number="settings.freeShippingThreshold" type="number" min="0" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">STANDARD SHIPPING FEE ($)</label>
+              <input v-model.number="settings.standardShippingFee" type="number" min="0" class="form-input" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">DEFAULT CURRENCY</label>
+            <select v-model="settings.currency" class="form-input">
+              <option value="NGN">NGN (₦) - Nigerian Naira</option>
+              <option value="USD">USD ($) - United States Dollar</option>
+              <option value="EUR">EUR (€) - Eurozone Euro</option>
+              <option value="GBP">GBP (£) - British Pound</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">FULFILMENT AUTO-APPROVE</label>
+            <div class="toggle-wrapper">
+              <input v-model="settings.autoApproveOrders" type="checkbox" id="auto-approve-toggle" class="toggle-checkbox" />
+              <label for="auto-approve-toggle" class="toggle-label"></label>
+              <span class="toggle-text">Auto-transition incoming orders to "Processing" state</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Announcement Banner -->
+      <div class="admin-card span-6">
+        <h2 class="admin-card-title">ANNOUNCEMENT TOP BAR</h2>
+        <div class="card-form">
+          <div class="form-group">
+            <label class="form-label">BANNER STATE</label>
+            <div class="toggle-wrapper">
+              <input v-model="settings.announcementEnabled" type="checkbox" id="announcement-toggle" class="toggle-checkbox" />
+              <label for="announcement-toggle" class="toggle-label"></label>
+              <span class="toggle-text">Enable and show top announcement bar on storefront pages</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">ANNOUNCEMENT TEXT MESSAGE</label>
+            <input v-model="settings.announcementText" type="text" class="form-input" :disabled="!settings.announcementEnabled" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">THEME / BACKGROUND BACKGROUND COLOR</label>
+            <div class="color-picker-wrapper">
+              <input v-model="settings.announcementBg" type="color" class="color-picker" :disabled="!settings.announcementEnabled" />
+              <span class="color-hex-val font-mono">{{ settings.announcementBg }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bank Transfer Accounts Section -->
+      <div class="admin-card span-12">
+        <div class="card-header-flex">
+          <div>
+            <h2 class="admin-card-title">BANK TRANSFER PAYMENT ACCOUNTS</h2>
+            <p class="admin-card-subtitle">Manage bank account details provided to customers during checkout.</p>
+          </div>
+          <button type="button" class="btn-add-bank" @click="addBankAccount">
+            + ADD BANK ACCOUNT
+          </button>
+        </div>
+
+        <div class="bank-accounts-list">
+          <div
+            v-for="(acc, idx) in settings.bankAccounts"
+            :key="acc.id || idx"
+            class="bank-account-card"
+          >
+            <div class="bank-account-card-header">
+              <span class="account-badge">BANK ACCOUNT #{{ idx + 1 }}</span>
+              <button
+                type="button"
+                class="btn-remove-bank"
+                @click="removeBankAccount(idx)"
+                title="Remove account"
+              >
+                ✕ REMOVE
+              </button>
+            </div>
+
+            <div class="card-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">BANK NAME</label>
+                  <input
+                    v-model="acc.bankName"
+                    type="text"
+                    class="form-input"
+                    placeholder="e.g. Guaranty Trust Bank (GTBank)"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">ACCOUNT NUMBER</label>
+                  <input
+                    v-model="acc.accountNumber"
+                    type="text"
+                    class="form-input font-mono"
+                    placeholder="e.g. 0123456789"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">ACCOUNT NAME / BENEFICIARY</label>
+                  <input
+                    v-model="acc.accountName"
+                    type="text"
+                    class="form-input"
+                    placeholder="e.g. EL. KELVINERO NIGERIA LTD"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">TRANSFER INSTRUCTIONS / MEMO NOTE</label>
+                  <input
+                    v-model="acc.instructions"
+                    type="text"
+                    class="form-input"
+                    placeholder="e.g. Use your Order ID as payment description."
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Access Gate Settings -->
+      <div class="admin-card span-6">
+        <h2 class="admin-card-title">ADMIN GATE ACCESS CREDENTIAL</h2>
+        <div class="card-form">
+          <div class="form-group">
+            <label class="form-label">PASSCODE FOR THE AUTH GATE</label>
+            <div class="passcode-input-wrapper">
+              <input
+                v-model="passcodeForm"
+                :type="showPasscode ? 'text' : 'password'"
+                class="form-input font-mono"
+                required
+                placeholder="••••••••••••"
+              />
+              <button type="button" class="btn-toggle-pass" @click="showPasscode = !showPasscode">
+                <svg v-if="showPasscode" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <p class="input-tip">Note: Changing this will update the gate authentication passcode instantly.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="settings-footer span-12">
+        <button type="submit" class="btn-save" :disabled="saving">
+          <span v-if="saving" class="spinner"></span>
+          <span v-else>COMMIT ALL CHANGES</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+
+definePageMeta({
+  layout: 'admin',
+  middleware: 'admin-auth'
+})
+
+useHead({
+  title: 'Configuration Settings | EL. Kelvinero Admin',
+  meta: [{ name: 'description', content: 'EL. Kelvinero store configuration and portal administration settings.' }]
+})
+
+const adminToken = useCookie('adminToken')
+const toasts = useState('toasts', () => [])
+
+const settings = ref({
+  storeName: 'EL. KELVINERO',
+  tagline: 'Timeless Style. Made to Stand Out.',
+  supportEmail: 'concierge@elkelvinero.com',
+  telephone: '+234 (0) 800 KELVINERO',
+  whatsappNumber: '',
+  businessHours: 'Mon – Fri, 9am – 6pm',
+  contactAddress: 'Lagos, Nigeria',
+  responseTime: 'Response within 24 hours',
+  freeShippingThreshold: 50000,
+  standardShippingFee: 3500,
+  currency: 'NGN',
+  autoApproveOrders: false,
+  announcementEnabled: true,
+  announcementText: 'FREE SHIPPING ON ORDERS OVER ₦50,000',
+  announcementBg: '#1a1a1a',
+  bankAccounts: [
+    {
+      id: '1',
+      bankName: 'Guaranty Trust Bank (GTBank)',
+      accountNumber: '0123456789',
+      accountName: 'EL. KELVINERO NIGERIA LTD',
+      instructions: 'Please use your Order ID as the transfer description/reference.'
+    }
+  ]
+})
+
+const passcodeForm = ref('elkelvinero2025')
+const showPasscode = ref(false)
+const saving = ref(false)
+
+const addBankAccount = () => {
+  if (!Array.isArray(settings.value.bankAccounts)) {
+    settings.value.bankAccounts = []
+  }
+  settings.value.bankAccounts.push({
+    id: Date.now().toString(),
+    bankName: '',
+    accountNumber: '',
+    accountName: '',
+    instructions: 'Please use your Order ID as the transfer description/reference.'
+  })
+}
+
+const removeBankAccount = (index) => {
+  if (Array.isArray(settings.value.bankAccounts) && settings.value.bankAccounts.length > 1) {
+    settings.value.bankAccounts.splice(index, 1)
+  } else {
+    showToast('At least one bank account is required.')
+  }
+}
+
+const showToast = (message) => {
+  toasts.value.push({
+    id: Date.now(),
+    message
+  })
+}
+
+const fetchSettings = async () => {
+  try {
+    const data = await $fetch('/api/v1/settings')
+    if (data) {
+      if (data.passcode) passcodeForm.value = data.passcode
+      const { passcode, ...rest } = data
+      settings.value = { ...settings.value, ...rest }
+    }
+  } catch (err) {
+    console.error('Failed to load store settings:', err)
+  }
+}
+
+onMounted(fetchSettings)
+
+const saveSettings = async () => {
+  if (saving.value) return
+  saving.value = true
+
+  const payload = {
+    ...settings.value,
+    passcode: passcodeForm.value
+  }
+
+  try {
+    await $fetch('/api/v1/settings', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${adminToken.value}` },
+      body: payload
+    })
+    showToast('Storefront configurations saved successfully.')
+  } catch (err) {
+    console.error('Failed to save settings:', err)
+    alert(err?.data?.message || err?.message || 'Error saving settings. Make sure you are logged in as admin.')
+  } finally {
+    saving.value = false
+  }
+}
+</script>
+
+<style scoped>
+.admin-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.page-subtitle {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Grids */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+}
+
+.span-6 {
+  grid-column: span 6;
+}
+
+.span-12 {
+  grid-column: span 12;
+}
+
+.card-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.form-input {
+  background-color: #161616;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  outline: none;
+  border-radius: 2px;
+  transition: all 0.25s ease;
+}
+
+.form-input:focus {
+  border-color: rgba(184, 152, 116, 0.4);
+  background-color: #1c1c1c;
+}
+
+.form-input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Toggle Switches */
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+
+.toggle-checkbox {
+  display: none;
+}
+
+.toggle-label {
+  position: relative;
+  width: 36px;
+  height: 18px;
+  background-color: #27272a;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  flex-shrink: 0;
+}
+
+.toggle-label::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.toggle-checkbox:checked + .toggle-label {
+  background-color: #b89874;
+}
+
+.toggle-checkbox:checked + .toggle-label::after {
+  transform: translateX(18px);
+}
+
+.toggle-text {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* Color picker specific */
+.color-picker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.color-picker {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+}
+
+.color-picker:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.color-hex-val {
+  font-size: 0.8rem;
+  color: #ffffff;
+}
+
+/* Secure gate elements */
+.passcode-input-wrapper {
+  position: relative;
+  display: flex;
+}
+
+.passcode-input-wrapper .form-input {
+  width: 100%;
+  padding-right: 2.5rem;
+}
+
+.btn-toggle-pass {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-toggle-pass:hover {
+  color: #ffffff;
+}
+
+.input-tip {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 0.15rem;
+}
+
+/* Footer & Commits */
+.settings-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 1.5rem;
+}
+
+.btn-save {
+  background-color: #b89874;
+  color: #000000;
+  border: none;
+  padding: 0.85rem 2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.25s ease;
+}
+
+.btn-save:hover:not(:disabled) {
+  background-color: #ffffff;
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #000000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 900px) {
+  .span-6 {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .btn-save {
+    width: 100%;
+  }
+}
+/* WhatsApp badge & field hint */
+.wa-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(37, 211, 102, 0.12);
+  color: #25d366;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  text-transform: uppercase;
+}
+
+.form-hint {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.28);
+  margin-top: 0.4rem;
+  line-height: 1.4;
+}
+
+/* Bank Account Settings */
+.card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn-add-bank {
+  background: rgba(201, 169, 110, 0.15);
+  border: 1px solid var(--color-accent, #c9a96e);
+  color: var(--color-accent, #c9a96e);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.5rem 1rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-add-bank:hover {
+  background: var(--color-accent, #c9a96e);
+  color: #111;
+}
+
+.bank-accounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.bank-account-card {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 1.25rem;
+}
+
+.bank-account-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.account-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-accent, #c9a96e);
+  background: rgba(201, 169, 110, 0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: 2px;
+}
+
+.btn-remove-bank {
+  background: rgba(226, 92, 92, 0.12);
+  border: 1px solid rgba(226, 92, 92, 0.3);
+  color: #e25c5c;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.75rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-remove-bank:hover {
+  background: #e25c5c;
+  color: #fff;
+}
+</style>
+
