@@ -2,28 +2,20 @@
   <div class="about-page">
 
     <!-- ───────────────────────────────────────── -->
-    <!-- SECTION 1: Hero – Split layout            -->
+    <!-- SECTION 1: Hero – Full-bleed centred       -->
     <!-- ───────────────────────────────────────── -->
     <section class="about-hero">
-      <!-- Left: Text column -->
-      <div class="about-hero__text">
-        <span class="about-hero__eyebrow">ABOUT US</span>
-        <h1 class="about-hero__title">More Than<br />Clothing.<br />It's a Statement.</h1>
+      <img src="/hero_fragrances.jpg" alt="TZORAH EMPORIUM Scent &amp; Oil Apothecary" class="about-hero__bg" />
+      <div class="about-hero__overlay"></div>
+      <div class="about-hero__content">
+        <span class="about-hero__eyebrow">ABOUT TZORAH EMPORIUM</span>
+        <h1 class="about-hero__title">The Alchemy of<br />Scents, Oils &amp;<br />Personal Luxuries.</h1>
         <div class="about-hero__divider"></div>
         <p class="about-hero__desc">
-          EL. Kelvinero is a modern lifestyle brand built on the belief that true style is timeless.
-          We create pieces that speak confidence, class, and individuality.
+          TZORAH EMPORIUM was founded on the belief that scent, self-care, and personal intimacy are profound art forms.
+          We bring together pure grade-A USA perfume oils, royal Arabian attars, authentic designer fragrances, pure steam-distilled botanicals, candlecraft supplies, and discreet adult wellness.
         </p>
-        <NuxtLink to="/" class="about-btn about-btn--solid">OUR STORY</NuxtLink>
-      </div>
-
-      <!-- Right: Hero model image -->
-      <div class="about-hero__image">
-        <img src="/images/about_hero_model.png" alt="EL. Kelvinero model wearing cream tee" />
-        <!-- Logo watermark overlay on image -->
-        <div class="img-logo-overlay img-logo-overlay--br">
-          <img src="/logo.png" alt="EL. Kelvinero" />
-        </div>
+        <NuxtLink to="/shop" class="about-btn about-btn--outline-light">EXPLORE THE STORE</NuxtLink>
       </div>
     </section>
 
@@ -32,7 +24,7 @@
     <!-- ───────────────────────────────────────── -->
     <section class="about-values">
       <div class="container">
-        <h2 class="about-values__heading">OUR VALUES</h2>
+        <h2 class="about-values__heading">OUR PRINCIPLES</h2>
         <div class="about-values__grid">
           <div v-for="val in values" :key="val.label" class="about-values__item">
             <!-- Icon -->
@@ -50,22 +42,21 @@
     <section class="about-craft">
       <!-- Left: text -->
       <div class="about-craft__text">
-        <span class="about-craft__eyebrow">CRAFTED TO LAST</span>
-        <h2 class="about-craft__title">Timeless by Design.<br />Made to Endure.</h2>
+        <span class="about-craft__eyebrow">UNCOMPROMISING PURITY</span>
+        <h2 class="about-craft__title">100% Authentic.<br />Never Compromised.</h2>
         <div class="about-craft__divider"></div>
         <p class="about-craft__desc">
-          Every piece is thoughtfully designed and meticulously crafted to deliver lasting
-          comfort, exceptional quality, and a fit that stands the test of time.
+          Every perfume oil, essential drop, and carrier base in our store is batch-verified for purity and long-lasting potency. Zero alcohol dilution in our pure oils, skin-safe cosmetic ingredients, and responsibly sourced botanical extracts.
         </p>
-        <button class="about-btn about-btn--outline">LEARN MORE</button>
+        <NuxtLink to="/shop?cat=OILS" class="about-btn about-btn--outline">VISIT THE OILS BAR</NuxtLink>
       </div>
 
-      <!-- Right: label/collar image -->
+      <!-- Right: image -->
       <div class="about-craft__image">
-        <img src="/images/about_label_collar.png" alt="EL. Kelvinero woven label detail" />
+        <img src="/images/or_oils.png" alt="TZORAH EMPORIUM Pure Botanical Oils" />
         <!-- Logo watermark overlay -->
         <div class="img-logo-overlay img-logo-overlay--br">
-          <img src="/logo.png" alt="EL. Kelvinero" />
+          <img src="/logo.png" alt="TZORAH EMPORIUM" />
         </div>
       </div>
     </section>
@@ -76,23 +67,22 @@
     <section class="about-mission">
       <!-- Left: dark background image panel -->
       <div class="about-mission__image">
-        <img src="/images/brand_bg.png" alt="EL. Kelvinero wardrobe studio" />
+        <img src="/images/brand_bg.png" alt="TZORAH EMPORIUM Sanctuary" />
         <div class="about-mission__image-overlay"></div>
         <!-- Logo centred on image panel -->
         <div class="about-mission__logo-wrap">
-          <img src="/logo.png" alt="EL. Kelvinero" class="about-mission__logo" />
+          <img src="/logo.png" alt="TZORAH EMPORIUM" class="about-mission__logo" />
         </div>
       </div>
 
       <!-- Right: text panel (dark background) -->
       <div class="about-mission__text">
-        <span class="about-mission__eyebrow">OUR MISSION</span>
-        <h2 class="about-mission__title">Elevate Everyday.</h2>
+        <span class="about-mission__eyebrow">OUR COMMITMENT</span>
+        <h2 class="about-mission__title">Elevate Your Senses.</h2>
         <p class="about-mission__desc">
-          Our mission is simple: to elevate everyday style with timeless designs and unmatched
-          quality—empowering you to be your best self, every day.
+          Whether you are formulating custom candles, exploring authentic Middle Eastern ouds, nourishing your skin with organic jojoba, caring for your beloved pets, or indulging in discreet adult wellness — TZORAH EMPORIUM is your trusted haven.
         </p>
-        <button class="about-btn about-btn--outline-light">JOIN THE JOURNEY</button>
+        <NuxtLink to="/shop" class="about-btn about-btn--outline-light">DISCOVER COLLECTION</NuxtLink>
       </div>
     </section>
 
@@ -106,30 +96,30 @@
 
 <script setup>
 useHead({
-  title: 'About Us | EL. Kelvinero',
-  meta: [{ name: 'description', content: 'Learn about EL. Kelvinero — a modern lifestyle brand built on the belief that true style is timeless.' }]
+  title: 'About Us | TZORAH EMPORIUM',
+  meta: [{ name: 'description', content: 'Discover TZORAH EMPORIUM — curators of authentic USA oil perfumes, Middle Eastern scents, pure botanical oils, candlecraft, pet care, and private luxuries.' }]
 })
 
 const values = [
   {
-    label: 'QUALITY',
-    desc: 'We use premium materials and pay attention to every detail.',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>`
+    label: 'AUTHENTICITY',
+    desc: 'Direct sourcing of unadulterated USA oil perfumes, Arabian attars, and genuine designer scents.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 11l2 2 4-4"/></svg>`
   },
   {
-    label: 'INTEGRITY',
-    desc: 'Honest in our process. Transparent in our relationships.',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/></svg>`
+    label: 'BOTANICAL PURITY',
+    desc: 'Steam-distilled pure essential oils and cold-pressed natural carrier oils rich in nutrients.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`
   },
   {
-    label: 'INDIVIDUALITY',
-    desc: 'Designed for those who lead, inspire, and stand out.',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`
+    label: 'TOTAL DISCRETION',
+    desc: 'All 18+ adult wellness and intimate orders are dispatched in 100% unmarked, confidential packaging.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`
   },
   {
-    label: 'IMPACT',
-    desc: 'Creating with purpose and giving back to the community.',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`
+    label: 'HOLISTIC CRAFT',
+    desc: 'Supporting DIY artisans and pet lovers with professional soy waxes, wicks, and soothing pet washes.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>`
   }
 ]
 </script>
@@ -186,17 +176,41 @@ const values = [
 
 /* ─── Section 1: Hero ─────────────────────────── */
 .about-hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  position: relative;
+  width: 100%;
   min-height: 520px;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  background-color: var(--color-bg-dark);
 }
 
-.about-hero__text {
-  padding: 4rem 3rem 4rem 4rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-color: var(--color-bg-light);
+.about-hero__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0.6;
+}
+
+.about-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.52);
+}
+
+.about-hero__content {
+  position: relative;
+  z-index: 2;
+  color: var(--color-text-light);
+  max-width: 680px;
+  padding: 0 1.5rem;
 }
 
 .about-hero__eyebrow {
@@ -204,48 +218,60 @@ const values = [
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.2em;
-  color: var(--color-text-muted);
+  color: var(--color-accent);
   margin-bottom: 1.25rem;
   display: block;
 }
 
 .about-hero__title {
   font-family: var(--font-serif);
-  font-size: 2.6rem;
-  font-weight: 400;
-  line-height: 1.2;
-  color: var(--color-text-dark);
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1.15;
+  color: #ffffff;
   margin-bottom: 1.25rem;
+  letter-spacing: 0.04em;
 }
 
 .about-hero__divider {
-  width: 36px;
+  width: 50px;
   height: 2px;
   background-color: var(--color-accent);
-  margin-bottom: 1.5rem;
+  margin: 0 auto 1.5rem auto;
 }
 
 .about-hero__desc {
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   line-height: 1.7;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.82);
   margin-bottom: 2rem;
-  max-width: 340px;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.about-hero__image {
-  position: relative;
-  overflow: hidden;
-  background-color: #d9cfc5;
+@media (max-width: 768px) {
+  .about-hero {
+    min-height: 420px;
+    height: 55vh;
+  }
+  .about-hero__title {
+    font-size: 2.2rem;
+  }
+  .about-hero__desc {
+    font-size: 0.88rem;
+  }
 }
 
-.about-hero__image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  display: block;
+@media (max-width: 480px) {
+  .about-hero {
+    min-height: 360px;
+    height: 50vh;
+  }
+  .about-hero__title {
+    font-size: 1.8rem;
+  }
 }
 
 /* ─── Shared: Logo watermark overlay (used on all clothing images) ── */

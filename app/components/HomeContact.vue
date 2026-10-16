@@ -9,7 +9,7 @@
           <h2 class="contact__title">We'd Love<br />To Hear From You</h2>
           <div class="contact__divider"></div>
           <p class="contact__desc">
-            Whether you have a question about sizing, an order, or just want to say hello — our team is here and ready to help.
+            Whether you have a question about custom perfume oils, fragrance notes, candlecraft formulations, or discreet private orders — our concierge is here to help.
           </p>
 
           <div class="contact__details">

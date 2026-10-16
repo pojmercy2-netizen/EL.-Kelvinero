@@ -11,8 +11,8 @@
         </svg>
       </button>
       <NuxtLink to="/" class="mini-header__logo">
-        <img src="/logo.png" alt="EL. Kelvinero" />
-        <span class="mini-header__brand">EL. KELVINERO</span>
+        <img src="/logo.png" alt="TZORAH EMPORIUM" />
+        <span class="mini-header__brand">TZORAH EMPORIUM</span>
       </NuxtLink>
       <button class="mini-header__bag" aria-label="Bag">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -309,7 +309,7 @@ const goToRegister = () => {
 }
 
 useHead({
-  title: 'Your Cart | EL. Kelvinero',
+  title: 'Your Cart | TZORAH EMPORIUM',
   meta: [{ name: 'description', content: 'Review your bag and proceed to checkout.' }]
 })
 
@@ -330,7 +330,7 @@ const currencySymbol = computed(() => {
   if (c === 'NGN') return '₦'
   if (c === 'EUR') return '€'
   if (c === 'GBP') return '£'
-  return '$'
+  return '₦'
 })
 
 const sizes = ['S', 'M', 'L', 'XL', 'XXL']

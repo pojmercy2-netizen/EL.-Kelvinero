@@ -10,9 +10,9 @@
     <aside class="admin-sidebar">
       <!-- Brand -->
       <div class="admin-sidebar__brand">
-        <img src="/logo.png" alt="EL. Kelvinero" class="admin-sidebar__logo" />
+        <img src="/logo.png" alt="TZORAH EMPORIUM" class="admin-sidebar__logo" />
         <div class="admin-sidebar__brand-text">
-          <span class="admin-sidebar__brand-name">EL. KELVINERO</span>
+          <span class="admin-sidebar__brand-name">TZORAH EMPORIUM</span>
           <span class="admin-sidebar__brand-sub">Admin Console</span>
         </div>
       </div>
@@ -162,26 +162,12 @@ const navItems = ref([
     label: 'Dashboard',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>'
   },
-  {
-    label: 'Collections',
-    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5L4 4.9A2.5 2.5 0 0 1 6.5 2.4L20 2.4L20 17L6.5 17"/></svg>',
-    expanded: false,
-    children: [
-      { to: '/admin/collections/men', label: 'Men' },
-      { to: '/admin/collections/women', label: 'Women' },
-      { to: '/admin/collections/kids', label: 'Kids' }
-    ]
-  },
+
   {
     to: '/admin/products',
     label: 'Products',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
     badge: '14'
-  },
-  {
-    to: '/admin/lookbook',
-    label: 'Lookbook',
-    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M20.4 14.5L16 10 4 20"/></svg>'
   },
   {
     to: '/admin/orders',
@@ -209,14 +195,11 @@ const navItems = ref([
 const pageMap = {
   '/admin/dashboard': 'Dashboard',
   '/admin/products': 'Products',
-  '/admin/lookbook': 'Lookbook',
   '/admin/orders': 'Orders',
   '/admin/customers': 'Customers',
   '/admin/analytics': 'Analytics',
   '/admin/settings': 'Settings',
-  '/admin/collections/men': "Men's Collection",
-  '/admin/collections/women': "Women's Collection",
-  '/admin/collections/kids': "Kids' Collection"
+
 }
 
 const currentPageTitle = computed(() => pageMap[route.path] || 'Admin')
@@ -513,10 +496,12 @@ function logout() {
 /* ─── Main Content ─────────────────────────────── */
 .admin-main {
   flex: 1;
+  min-width: 0;
   margin-left: 240px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow: hidden;
   transition: margin-left 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
@@ -599,6 +584,10 @@ function logout() {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ─── Shared Admin Card Styles ─────────────────── */

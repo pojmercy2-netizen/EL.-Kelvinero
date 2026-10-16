@@ -23,18 +23,8 @@
       <!-- Center Logo / Collection Button -->
       <NuxtLink to="/shop" class="mobile-bottom-nav__item mobile-bottom-nav__item--center">
         <div class="mobile-bottom-nav__center-btn">
-          <img src="/logo.png" alt="EL." class="mobile-bottom-nav__center-logo" />
+          <img src="/logo.png" alt="TZORAH EMPORIUM" class="mobile-bottom-nav__center-logo" />
         </div>
-      </NuxtLink>
-
-      <!-- Lookbook -->
-      <NuxtLink to="/lookbook" class="mobile-bottom-nav__item" active-class="mobile-bottom-nav__item--active">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 2 7 12 12 22 7 12 2" />
-          <polyline points="2 17 12 22 22 17" />
-          <polyline points="2 12 12 17 22 12" />
-        </svg>
-        <span class="mobile-bottom-nav__label">LOOKBOOK</span>
       </NuxtLink>
 
       <!-- Cart Trigger -->

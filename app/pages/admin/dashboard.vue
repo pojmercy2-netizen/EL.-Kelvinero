@@ -62,10 +62,10 @@
             <line x1="40" y1="170" x2="580" y2="170" stroke="rgba(255,255,255,0.08)" />
 
             <!-- Y-Axis Labels -->
-            <text x="15" y="25" class="chart-text">$30k</text>
-            <text x="15" y="70" class="chart-text">$20k</text>
-            <text x="15" y="115" class="chart-text">$10k</text>
-            <text x="15" y="158" class="chart-text">$0k</text>
+            <text x="15" y="25" class="chart-text">₦30k</text>
+            <text x="15" y="70" class="chart-text">₦20k</text>
+            <text x="15" y="115" class="chart-text">₦10k</text>
+            <text x="15" y="158" class="chart-text">₦0k</text>
 
             <!-- Line Last Year (Muted Grey) -->
             <path
@@ -130,16 +130,6 @@
             </div>
           </NuxtLink>
 
-          <NuxtLink to="/admin/lookbook" class="quick-action-btn">
-            <span class="action-icon bg-gold-low">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b89874" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M20.4 14.5L16 10 4 20"/></svg>
-            </span>
-            <div class="action-details">
-              <span class="action-title">Manage Lookbook</span>
-              <span class="action-desc">Add or remove lookbook entries</span>
-            </div>
-          </NuxtLink>
-
           <NuxtLink to="/admin/settings" class="quick-action-btn">
             <span class="action-icon bg-grey-low">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a1a1aa" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -188,7 +178,7 @@
                 </td>
                 <td>{{ order.date }}</td>
                 <td>{{ order.itemCount }} items</td>
-                <td class="font-semibold text-white">${{ order.total.toFixed(2) }}</td>
+                <td class="font-semibold text-white">₦{{ order.total.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</td>
                 <td>
                   <span :class="['badge-status', 'badge-' + order.status.toLowerCase()]">
                     {{ order.status }}
@@ -216,7 +206,7 @@
               <span class="product-item-name">{{ product.name }}</span>
               <span class="product-item-sales">{{ product.salesCount }} Sold</span>
             </div>
-            <div class="product-item-revenue">${{ product.revenue.toLocaleString() }}</div>
+            <div class="product-item-revenue">₦{{ product.revenue.toLocaleString() }}</div>
           </div>
         </div>
       </div>
@@ -233,8 +223,8 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Executive Dashboard | EL. Kelvinero Admin',
-  meta: [{ name: 'description', content: 'EL. Kelvinero administrative panel dashboard overview.' }]
+  title: 'Executive Dashboard | TZORAH EMPORIUM Admin',
+  meta: [{ name: 'description', content: 'TZORAH EMPORIUM administrative panel dashboard overview.' }]
 })
 
 const adminToken = useCookie('adminToken')
@@ -285,7 +275,7 @@ const recentOrders = computed(() => {
   }))
 })
 
-const topProducts = computed(() => [])
+const topProducts = computed(() => dashboardData.value?.top_products || [])
 
 const refreshData = async () => {
   refreshing.value = true

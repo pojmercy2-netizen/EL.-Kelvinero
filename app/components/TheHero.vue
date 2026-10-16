@@ -1,21 +1,21 @@
 <template>
   <section id="home" class="hero">
     <div class="hero__bg-container">
-      <img src="/images/hero section.jpeg" alt="Editorial Fashion Background" class="hero__bg-img" />
+      <img src="/hero_fragrances.jpg" alt="TZORAH EMPORIUM Perfumes, Oils and Lifestyle" class="hero__bg-img" />
       <div class="hero__overlay"></div>
     </div>
     
     <div class="container hero__container">
       <div class="hero__content animate-fade-in">
-        <span class="hero__subtitle">TIMELESS STYLE.</span>
-        <h1 class="hero__title">MADE TO<br />STAND OUT.</h1>
+        <span class="hero__subtitle">TZORAH EMPORIUM</span>
+        <h1 class="hero__title">THE ALCHEMY OF<br />SCENTS & OILS.</h1>
         <div class="hero__divider"></div>
         <p class="hero__description">
-          Elevated essentials for the modern wardrobe. Designed for confidence. Built to last.
+          Imported USA perfume oils, royal Arabian attars, pure essential & natural carrier oils, artisan candle crafting, and discreet adult luxuries.
         </p>
         <div class="hero__actions">
-          <a href="#shop" class="btn btn-primary">SHOP COLLECTION</a>
-          <a href="#lookbook" class="btn btn-secondary">EXPLORE LOOKBOOK</a>
+          <NuxtLink to="/shop" class="btn btn-primary">EXPLORE STORE</NuxtLink>
+          <NuxtLink to="/shop?cat=OILS" class="btn btn-secondary">THE OILS BAR</NuxtLink>
         </div>
       </div>
     </div>
@@ -36,12 +36,13 @@
 .hero {
   position: relative;
   width: 100%;
-  height: 78vh;
-  min-height: 480px;
+  height: 85vh;
+  min-height: 580px;
   display: flex;
   align-items: center;
   overflow: hidden;
   background-color: var(--color-bg-dark);
+  padding: 2rem 0 3.5rem 0;
 }
 
 .hero__bg-container {
@@ -57,7 +58,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 25%;
+  object-position: center 30%;
   transform: scale(1.05);
   animation: slowZoom 20s ease-out forwards;
 }
@@ -68,24 +69,23 @@
   left: 0;
   width: 100%;
   height: 100%;
-  /* Gradient to darken the left side for optimal text contrast */
-  background: linear-gradient(
-    to right,
-    rgba(17, 17, 17, 0.75) 0%,
-    rgba(17, 17, 17, 0.5) 40%,
-    rgba(17, 17, 17, 0.2) 100%
-  );
+  background: rgba(17, 17, 17, 0.52);
 }
 
 .hero__container {
   position: relative;
   z-index: 2;
-  transform: translateY(-3.5rem);
+  transform: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .hero__content {
-  max-width: 460px;
+  max-width: 620px;
+  width: 100%;
   color: var(--color-text-light);
+  text-align: center;
 }
 
 .hero__subtitle {
@@ -113,7 +113,7 @@
   width: 50px;
   height: 2px;
   background-color: var(--color-accent);
-  margin-bottom: 1.25rem;
+  margin: 0 auto 1.25rem auto;
 }
 
 .hero__description {
@@ -124,13 +124,16 @@
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.85);
   margin-bottom: 1.5rem;
-  max-width: 420px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero__actions {
   display: flex;
   gap: 1.25rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .hero__actions .btn {
@@ -198,12 +201,13 @@
 /* Responsive adjustments */
 @media (max-width: 992px) {
   .hero {
-    height: 65vh;
-    min-height: 400px;
+    height: 68vh;
+    min-height: 440px;
+    padding-top: 1.5rem;
   }
 
   .hero__container {
-    transform: translateY(-2rem);
+    transform: none;
   }
 
   .hero__subtitle {
@@ -228,12 +232,13 @@
 
 @media (max-width: 576px) {
   .hero {
-    height: 60vh;
-    min-height: 360px;
+    height: 62vh;
+    min-height: 380px;
+    padding-top: 1rem;
   }
 
   .hero__container {
-    transform: translateY(-1rem);
+    transform: translateY(0);
   }
 
   .hero__subtitle {

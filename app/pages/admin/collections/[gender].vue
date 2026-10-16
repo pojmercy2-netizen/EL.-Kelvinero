@@ -53,7 +53,7 @@
                 <span class="product-name">{{ product.name }}</span>
               </td>
               <td class="text-upper font-mono">{{ product.category }}</td>
-              <td class="font-semibold text-white">${{ product.price.toFixed(2) }}</td>
+              <td class="font-semibold text-white">₦{{ product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</td>
               <td>
                 <div class="product-colors-preview">
                   <span
@@ -100,7 +100,7 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">PRICE ($)</label>
+            <label class="form-label">PRICE (₦)</label>
             <input v-model.number="form.price" type="number" step="0.01" min="0" class="form-input" required placeholder="79.00" />
           </div>
 
@@ -190,8 +190,8 @@ watch(genderName, (newVal) => {
 }, { immediate: true })
 
 useHead({
-  title: computed(() => `${genderName.value} Collection | EL. Kelvinero Admin`),
-  meta: [{ name: 'description', content: 'Manage gender specific collection items.' }]
+  title: computed(() => `${genderName.value} Collection | TZORAH EMPORIUM Admin`),
+  meta: [{ name: 'description', content: 'Manage category specific collection items.' }]
 })
 
 // ── Live backend state ──────────────────────────────
@@ -249,7 +249,7 @@ const fetchProducts = async () => {
           category: (p.category?.name || 'T-SHIRTS').toUpperCase(),
           name: p.name,
           price: parseFloat(p.price),
-          priceFormatted: `$${parseFloat(p.price).toFixed(2)}`,
+          priceFormatted: `₦${parseFloat(p.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
           image: p.image || '/images/product_tee.png',
           colors
         }

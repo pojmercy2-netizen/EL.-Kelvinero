@@ -10,18 +10,25 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 400,
       statusMessage: 'Bad Request',
-      message: 'Email and password are required'
+      message: 'Email and password are required',
+      data: {
+        detail: 'Email and password are required'
+      }
     })
   }
 
-  const res = await query('SELECT * FROM users WHERE email = ?', [email])
+  const cleanEmail = email.toLowerCase().trim()
+  const res = await query('SELECT * FROM users WHERE LOWER(email) = LOWER(?)', [cleanEmail])
   const user = res.rows[0]
 
   if (!user || !verifyPassword(password, user.hashed_password)) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized',
-      message: 'Incorrect email or password'
+      message: 'Incorrect email or password',
+      data: {
+        detail: 'Incorrect email or password'
+      }
     })
   }
 

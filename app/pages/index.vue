@@ -2,6 +2,7 @@
   <div>
     <TheHero />
     <Features />
+    <DepartmentShowcase />
     <NewArrivals />
     <BrandStatement />
     <HomeCTA />

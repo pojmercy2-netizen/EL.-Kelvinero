@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     const itemsRes = await query(`
       SELECT oi.*, p.name, p.slug, p.image, p.price
       FROM order_items oi
-      JOIN products p ON oi.product_id = p.id
+      LEFT JOIN products p ON oi.product_id = p.id
       WHERE oi.order_id = ?
     `, [order.id])
 
@@ -37,6 +37,7 @@ export default defineEventHandler(async (event) => {
       status: order.status,
       payment_status: order.payment_status,
       payment_reference: order.payment_reference,
+      payment_receipt: order.payment_receipt || null,
       created_at: order.created_at,
       items: (itemsRes.rows as any[]).map(item => ({
         id: item.id,
@@ -44,10 +45,10 @@ export default defineEventHandler(async (event) => {
         unit_price: parseFloat(item.unit_price),
         product: {
           id: item.product_id,
-          name: item.name,
-          slug: item.slug,
-          image: item.image,
-          price: parseFloat(item.price),
+          name: item.name || `Item #${item.product_id}`,
+          slug: item.slug || '',
+          image: item.image || '/images/products/perf_usa_1.png',
+          price: item.price ? parseFloat(item.price) : parseFloat(item.unit_price),
         }
       }))
     })

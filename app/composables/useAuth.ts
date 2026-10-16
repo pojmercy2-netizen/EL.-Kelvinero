@@ -72,7 +72,7 @@ export const useAuth = () => {
       await login(email, password)
       return { success: true }
     } catch (err: any) {
-      const errorMsg = err.data?.detail || 'Registration failed. Please try again.'
+      const errorMsg = err.data?.message || err.data?.data?.detail || err.data?.detail || err.message || 'Registration failed. Please try again.'
       showToast(errorMsg)
       return { success: false, error: errorMsg }
     }
@@ -95,7 +95,7 @@ export const useAuth = () => {
       }
       return { success: false, error: 'Invalid response from server' }
     } catch (err: any) {
-      const errorMsg = err.data?.detail || 'Authentication failed. Please verify credentials.'
+      const errorMsg = err.data?.message || err.data?.data?.detail || err.data?.detail || err.message || 'Authentication failed. Please verify credentials.'
       showToast(errorMsg)
       return { success: false, error: errorMsg }
     }

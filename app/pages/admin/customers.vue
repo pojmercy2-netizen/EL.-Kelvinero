@@ -44,16 +44,20 @@
               >
                 <td>
                   <div class="client-cell">
-                    <span class="client-avatar">{{ customer.name.charAt(0) }}</span>
+                    <span class="client-avatar">{{ (customer.name || 'C').charAt(0).toUpperCase() }}</span>
                     <div class="client-details">
-                      <span class="client-name">{{ customer.name }}</span>
+                      <div class="client-name-row">
+                        <span class="client-name">{{ customer.name }}</span>
+                        <span v-if="customer.is_admin" class="badge-role badge-role--admin">ADMIN</span>
+                        <span v-else class="badge-role badge-role--client">CLIENT</span>
+                      </div>
                       <span class="client-email">{{ customer.email }}</span>
                     </div>
                   </div>
                 </td>
                 <td class="font-mono">{{ customer.joinDate }}</td>
                 <td class="font-mono">{{ customer.orderCount }}</td>
-                <td class="font-semibold text-white">${{ customer.totalSpend.toFixed(2) }}</td>
+                <td class="font-semibold text-white">₦{{ customer.totalSpend.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</td>
                 <td>
                   <span :class="['badge-status', getStatusClass(customer.totalSpend)]">
                     {{ getVIPStatusLabel(customer.totalSpend) }}
@@ -76,13 +80,41 @@
 
         <div v-else class="profile-card-content">
           <div class="profile-avatar-large">
-            {{ selectedCustomer.name.charAt(0) }}
+            {{ (selectedCustomer.name || 'C').charAt(0).toUpperCase() }}
           </div>
           <h3 class="profile-name-title">{{ selectedCustomer.name }}</h3>
           <p class="profile-email-sub">{{ selectedCustomer.email }}</p>
-          <span class="profile-badge-vip" :style="{ backgroundColor: getVIPBadgeBg(selectedCustomer.totalSpend) }">
-            {{ getVIPStatusLabel(selectedCustomer.totalSpend) }}
-          </span>
+          <div class="profile-badges-row">
+            <span class="profile-badge-vip" :style="{ backgroundColor: getVIPBadgeBg(selectedCustomer.totalSpend) }">
+              {{ getVIPStatusLabel(selectedCustomer.totalSpend) }}
+            </span>
+            <span v-if="selectedCustomer.is_admin" class="badge-role badge-role--admin">ADMIN ACCESS</span>
+            <span v-else class="badge-role badge-role--client">STANDARD CLIENT</span>
+          </div>
+
+          <!-- Functional Actions -->
+          <div class="customer-actions-group">
+            <button
+              class="btn-customer-action btn-customer-action--role"
+              :class="{ 'btn-customer-action--revoke': selectedCustomer.is_admin }"
+              :disabled="roleUpdating"
+              @click="toggleAdminRole(selectedCustomer)"
+            >
+              <svg v-if="!selectedCustomer.is_admin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+              {{ roleUpdating ? 'Updating...' : (selectedCustomer.is_admin ? 'Revoke Admin Privileges' : 'Promote to Admin') }}
+            </button>
+            <div class="action-buttons-inline">
+              <a :href="`mailto:${selectedCustomer.email}`" class="btn-customer-action btn-customer-action--secondary" title="Email Client">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Email
+              </a>
+              <NuxtLink to="/admin/orders" class="btn-customer-action btn-customer-action--secondary" title="Manage Orders">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                Orders
+              </NuxtLink>
+            </div>
+          </div>
 
           <div class="profile-divider"></div>
 
@@ -93,11 +125,11 @@
             </div>
             <div class="metric-item">
               <span class="metric-label">TOTAL SPENT</span>
-              <span class="metric-value font-mono text-gold">${{ selectedCustomer.totalSpend.toFixed(2) }}</span>
+              <span class="metric-value font-mono text-gold">₦{{ selectedCustomer.totalSpend.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</span>
             </div>
             <div class="metric-item">
               <span class="metric-label">AVERAGE ORDER</span>
-              <span class="metric-value font-mono">${{ (selectedCustomer.totalSpend / (selectedCustomer.orderCount || 1)).toFixed(2) }}</span>
+              <span class="metric-value font-mono">₦{{ (selectedCustomer.totalSpend / (selectedCustomer.orderCount || 1)).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</span>
             </div>
             <div class="metric-item">
               <span class="metric-label">MEMBER SINCE</span>
@@ -108,33 +140,27 @@
           <div class="profile-divider"></div>
 
           <div class="profile-extra-details">
-            <h4 class="details-section-title">RECENT ACTIVITY LOG</h4>
-            <div class="activity-timeline">
-              <div class="timeline-event">
+            <h4 class="details-section-title">RECENT ACTIVITY &amp; ORDERS</h4>
+            <div v-if="selectedCustomer.recentOrders && selectedCustomer.recentOrders.length > 0" class="activity-timeline">
+              <div v-for="order in selectedCustomer.recentOrders" :key="order.id" class="timeline-event">
                 <span class="timeline-dot"></span>
                 <div class="timeline-info">
-                  <span class="event-title">Order #EK-7281 Placed</span>
-                  <span class="event-time">July 28, 2026 - 15:42</span>
+                  <span class="event-title">Order #{{ order.id }} — ₦{{ order.total.toLocaleString() }}</span>
+                  <span class="event-time">{{ order.date }} • {{ order.status }}</span>
                 </div>
               </div>
-              <div class="timeline-event">
-                <span class="timeline-dot"></span>
-                <div class="timeline-info">
-                  <span class="event-title">Logged in via Mobile app</span>
-                  <span class="event-time">July 28, 2026 - 10:15</span>
-                </div>
-              </div>
-              <div class="timeline-event">
-                <span class="timeline-dot"></span>
-                <div class="timeline-info">
-                  <span class="event-title">Added 2 items to Wishlist</span>
-                  <span class="event-time">July 25, 2026 - 21:04</span>
-                </div>
-              </div>
+            </div>
+            <div v-else class="empty-activity-note">
+              <span>No orders registered under this client email yet.</span>
             </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Toast message -->
+    <div v-if="toastMessage" class="toast-popup animate-fade-in">
+      {{ toastMessage }}
     </div>
   </div>
 </template>
@@ -148,7 +174,7 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Clients Directory | EL. Kelvinero Admin',
+  title: 'Clients Directory | TZORAH EMPORIUM Admin',
   meta: [{ name: 'description', content: 'Customer relationship manager and account profiles directory.' }]
 })
 
@@ -179,32 +205,48 @@ const fetchCustomers = async () => {
 
 onMounted(fetchCustomers)
 
-const selectCustomer = (customer) => {
-  selectedCustomer.value = customer
+const roleUpdating = ref(false)
+const toastMessage = ref('')
+
+const showToast = (msg) => {
+  toastMessage.value = msg
+  setTimeout(() => {
+    toastMessage.value = ''
+  }, 3500)
 }
 
-const getVIPStatusLabel = (spend) => {
-  if (spend >= 2000) return 'VIP BLACK'
-  if (spend >= 1000) return 'VIP PLATINUM'
-  return 'GOLD MEMBER'
-}
+const toggleAdminRole = async (customer) => {
+  if (!customer || !adminToken.value) return
+  const newRole = !customer.is_admin
+  const actionText = newRole ? 'promote to Administrator' : 'revoke Administrator access for'
+  if (!confirm(`Are you sure you want to ${actionText} ${customer.name || customer.email}?`)) {
+    return
+  }
 
-const getStatusClass = (spend) => {
-  if (spend >= 2000) return 'status-vip-black'
-  if (spend >= 1000) return 'status-vip-plat'
-  return 'status-vip-gold'
-}
-
-const getVIPBadgeBg = (spend) => {
-  if (spend >= 2000) return '#1a1a1a'
-  if (spend >= 1000) return '#4b5563'
-  return '#a1805c'
+  roleUpdating.value = true
+  try {
+    await $fetch(`/api/v1/customers/${customer.id}/role`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${adminToken.value}` },
+      body: { is_admin: newRole }
+    })
+    customer.is_admin = newRole
+    if (selectedCustomer.value && selectedCustomer.value.id === customer.id) {
+      selectedCustomer.value.is_admin = newRole
+    }
+    showToast(`✓ Successfully updated privileges for ${customer.name || customer.email}!`)
+  } catch (err) {
+    console.error('Failed to update role:', err)
+    showToast(`❌ ${err?.data?.message || err?.message || 'Failed to update role.'}`)
+  } finally {
+    roleUpdating.value = false
+  }
 }
 
 const filteredCustomers = computed(() => {
   return adminCustomers.value.filter(c => {
-    return c.name.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
-           c.email.toLowerCase().includes(searchQuery.value.toLowerCase())
+    return (c.name || '').toLowerCase().includes(searchQuery.value.toLowerCase()) || 
+           (c.email || '').toLowerCase().includes(searchQuery.value.toLowerCase())
   })
 })
 </script>
@@ -528,6 +570,123 @@ const filteredCustomers = computed(() => {
 .event-time {
   font-size: 0.65rem;
   color: rgba(255, 255, 255, 0.35);
+}
+
+.client-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge-role {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.badge-role--admin {
+  background: rgba(184, 152, 116, 0.2);
+  color: #b89874;
+  border: 1px solid rgba(184, 152, 116, 0.4);
+}
+
+.badge-role--client {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.profile-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.customer-actions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.action-buttons-inline {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.btn-customer-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+
+.btn-customer-action--role {
+  width: 100%;
+  background: #b89874;
+  color: #0b0b0b;
+}
+
+.btn-customer-action--role:hover:not(:disabled) {
+  background: #d0b08c;
+}
+
+.btn-customer-action--revoke {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.btn-customer-action--revoke:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.btn-customer-action--secondary {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-customer-action--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.empty-activity-note {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  padding: 0.5rem 0;
+}
+
+.toast-popup {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: #181818;
+  color: #ffffff;
+  padding: 0.85rem 1.4rem;
+  border-radius: 6px;
+  border: 1px solid #b89874;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  font-size: 0.82rem;
+  z-index: 9999;
 }
 
 @media (max-width: 1024px) {

@@ -74,9 +74,14 @@
                   </span>
                 </td>
                 <td>
-                  <span :class="['badge-payment', order.paymentStatus === 'Paid' ? 'badge-paid' : 'badge-unpaid']">
-                    {{ order.paymentStatus === 'Paid' ? '✓ PAID' : '⏳ UNPAID / PENDING' }}
-                  </span>
+                  <div class="payment-cell-group">
+                    <span :class="['badge-payment', order.paymentStatus === 'Paid' ? 'badge-paid' : 'badge-unpaid']">
+                      {{ order.paymentStatus === 'Paid' ? '✓ PAID' : '⏳ UNPAID / PENDING' }}
+                    </span>
+                    <span v-if="order.paymentReceipt" class="badge-receipt-tag" title="Customer uploaded proof of payment">
+                      📸 PROOF ATTACHED
+                    </span>
+                  </div>
                 </td>
                 <td @click.stop>
                   <div class="action-buttons">
@@ -112,13 +117,47 @@
                       <p class="details-p"><span class="label">Order Date:</span> {{ order.date }}</p>
                     </div>
 
+                    <!-- Payment Proof & Receipt Section -->
+                    <div class="details-section receipt-card-section">
+                      <h4 class="details-title">PAYMENT PROOF &amp; RECEIPT</h4>
+                      <div v-if="order.paymentReceipt" class="admin-receipt-preview">
+                        <div class="receipt-status-banner">
+                          <span class="receipt-ok-icon">✓</span>
+                          <span class="receipt-ok-text">Customer uploaded payment confirmation</span>
+                        </div>
+                        <div class="receipt-image-frame" @click="activeReceiptModal = order.paymentReceipt">
+                          <img :src="order.paymentReceipt" alt="Payment Receipt" class="receipt-image-thumb" />
+                          <div class="receipt-hover-overlay">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                            <span>Click to view full receipt</span>
+                          </div>
+                        </div>
+                        <div class="receipt-btn-row">
+                          <a :href="order.paymentReceipt" target="_blank" class="btn-receipt-view" @click.stop>
+                            ↗ Open Original
+                          </a>
+                          <button
+                            v-if="order.paymentStatus !== 'Paid'"
+                            class="btn-approve-payment-direct"
+                            @click="confirmPayment(order.rawId)"
+                          >
+                            ✓ Approve &amp; Mark Paid
+                          </button>
+                        </div>
+                      </div>
+                      <div v-else class="admin-no-receipt">
+                        <div class="no-receipt-icon">⏳</div>
+                        <p class="no-receipt-msg">No payment receipt uploaded yet by customer.</p>
+                        <span class="no-receipt-hint">Awaiting transfer screenshot</span>
+                      </div>
+                    </div>
+
                     <!-- Items Summary -->
-                    <div class="details-section span-2">
+                    <div class="details-section">
                       <h4 class="details-title">PURCHASED PIECES</h4>
                       <div class="details-items-list">
                         <div v-for="item in order.items" :key="item.name" class="details-item">
                           <div class="item-img-placeholder">
-                            <!-- Visual box representing the product color -->
                             <span class="color-indicator" :style="{ backgroundColor: getColorHex(item.color || 'black') }"></span>
                           </div>
                           <div class="item-details">
@@ -126,15 +165,15 @@
                             <span class="item-meta">Color: {{ item.color || 'N/A' }} | Qty: {{ item.qty }}</span>
                           </div>
                           <div class="item-pricing">
-                            <span class="item-qty-price">{{ item.qty }} &times; ${{ item.price.toFixed(2) }}</span>
-                            <span class="item-total-price">${{ (item.qty * item.price).toFixed(2) }}</span>
+                            <span class="item-qty-price">{{ item.qty }} &times; {{ currencySymbol }}{{ item.price.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</span>
+                            <span class="item-total-price">{{ currencySymbol }}{{ (item.qty * item.price).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</span>
                           </div>
                         </div>
                       </div>
 
                       <div class="order-total-bar">
                         <span class="total-label">SUBTOTAL</span>
-                        <span class="total-val">${{ order.total.toFixed(2) }}</span>
+                        <span class="total-val">{{ currencySymbol }}{{ order.total.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</span>
                       </div>
                     </div>
                   </div>
@@ -145,6 +184,32 @@
         </table>
       </div>
     </div>
+
+    <!-- Receipt Lightbox Modal -->
+    <Teleport to="body">
+      <div v-if="activeReceiptModal" class="receipt-modal-backdrop" @click="activeReceiptModal = null">
+        <div class="receipt-modal-card" @click.stop>
+          <div class="receipt-modal-header">
+            <div class="receipt-modal-title-group">
+              <span class="receipt-modal-badge">PROOF OF PAYMENT</span>
+              <h3 class="receipt-modal-title">Verified Bank Transfer Slip</h3>
+            </div>
+            <button class="receipt-modal-close" @click="activeReceiptModal = null" title="Close">✕</button>
+          </div>
+          <div class="receipt-modal-body">
+            <img :src="activeReceiptModal" alt="Payment Receipt" class="receipt-modal-img" />
+          </div>
+          <div class="receipt-modal-footer">
+            <a :href="activeReceiptModal" target="_blank" download class="btn-receipt-download">
+              ⬇ Download Full Image
+            </a>
+            <button class="btn-receipt-dismiss" @click="activeReceiptModal = null">
+              Close Preview
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -157,7 +222,7 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Track Orders | EL. Kelvinero Admin',
+  title: 'Track Orders | TZORAH EMPORIUM Admin',
   meta: [{ name: 'description', content: 'Order fulfilment, delivery tracking, and transactional record log.' }]
 })
 
@@ -198,6 +263,8 @@ const fetchOrders = async () => {
 
 onMounted(fetchOrders)
 
+const activeReceiptModal = ref(null)
+
 const adminOrders = computed(() => {
   return rawOrders.value.map(o => ({
     id: `EK-${o.id}`,
@@ -209,6 +276,7 @@ const adminOrders = computed(() => {
     total: parseFloat(o.total_price || 0),
     status: o.status || 'Pending',
     paymentStatus: o.payment_status || 'Unpaid',
+    paymentReceipt: o.payment_receipt || null,
     address: o.shipping_address || 'N/A',
     items: (o.items || []).map(i => ({
       name: i.product?.name || 'Product Item',
@@ -739,6 +807,270 @@ const filteredOrders = computed(() => {
 }
 .btn-confirm-pay:hover {
   opacity: 0.9;
+}
+
+/* ─── Receipt Badges & Preview Section ─────────── */
+.payment-cell-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+
+.badge-receipt-tag {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: rgba(201, 169, 110, 0.15);
+  color: #c9a96e;
+  border: 1px solid rgba(201, 169, 110, 0.35);
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.receipt-card-section {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.receipt-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(46, 204, 113, 0.1);
+  border: 1px solid rgba(46, 204, 113, 0.25);
+  padding: 0.35rem 0.6rem;
+  border-radius: 2px;
+  font-size: 0.68rem;
+  color: #2ecc71;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.receipt-image-frame {
+  position: relative;
+  width: 100%;
+  max-width: 220px;
+  height: 140px;
+  background: #0d0d0d;
+  border: 1px solid rgba(201, 169, 110, 0.3);
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+}
+
+.receipt-image-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.receipt-image-frame:hover .receipt-image-thumb {
+  transform: scale(1.05);
+}
+
+.receipt-hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  color: #c9a96e;
+  font-size: 0.65rem;
+  font-weight: 600;
+  transition: opacity 0.2s ease;
+}
+
+.receipt-image-frame:hover .receipt-hover-overlay {
+  opacity: 1;
+}
+
+.receipt-btn-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 220px;
+}
+
+.btn-receipt-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.45rem 0.75rem;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-receipt-view:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.btn-approve-payment-direct {
+  background: #2ecc71;
+  color: #111;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border: none;
+  padding: 0.55rem 0.85rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-approve-payment-direct:hover {
+  opacity: 0.9;
+}
+
+.admin-no-receipt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  gap: 0.35rem;
+}
+
+.no-receipt-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.no-receipt-msg {
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.no-receipt-hint {
+  font-size: 0.64rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* ─── Receipt Lightbox Modal ───────────────────── */
+.receipt-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.receipt-modal-card {
+  background: #141414;
+  border: 1px solid rgba(201, 169, 110, 0.3);
+  border-radius: 6px;
+  width: 100%;
+  max-width: 650px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+}
+
+.receipt-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.receipt-modal-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.receipt-modal-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #c9a96e;
+}
+
+.receipt-modal-title {
+  font-size: 0.95rem;
+  color: #fff;
+  margin: 0;
+  font-weight: 600;
+}
+
+.receipt-modal-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.receipt-modal-close:hover { color: #fff; }
+
+.receipt-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0a;
+  overflow-y: auto;
+  max-height: 65vh;
+}
+
+.receipt-modal-img {
+  max-width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.receipt-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: #111111;
+}
+
+.btn-receipt-download {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #c9a96e;
+  text-decoration: none;
+}
+.btn-receipt-download:hover { text-decoration: underline; }
+
+.btn-receipt-close {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: none;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 2px;
+  cursor: pointer;
 }
 </style>
 

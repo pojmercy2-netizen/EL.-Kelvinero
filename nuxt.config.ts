@@ -5,11 +5,11 @@ export default defineNuxtConfig({
   css: ['~/app.css'],
   app: {
     head: {
-      title: 'EL. Kelvinero - Timeless Style. Made to Stand Out.',
+      title: 'TZORAH EMPORIUM | Luxury Perfumes, Botanical Oils & Lifestyle Emporium',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Elevated essentials for the modern wardrobe. Designed for confidence. Built to last.' }
+        { name: 'description', content: 'Discover authentic USA oil perfumes, Arabian and designer fragrances, pure essential & natural oils, candle craft supplies, pet care, and luxury intimates at TZORAH EMPORIUM.' }
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -17,8 +17,8 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
-    dbUrl: process.env.DATABASE_URL || 'mysql://root:@localhost:3306/elkelvinero',
-    secretKey: process.env.SECRET_KEY || 'el-kelvinero-secret-key-development-2026-secure',
+    dbUrl: process.env.DATABASE_URL || 'postgresql://postgres:Ebimene0812%3F%3F@localhost:5432/tzorah_emporium',
+    secretKey: process.env.SECRET_KEY || 'tzorah-emporium-secret-key-development-2026-secure',
     algorithm: process.env.ALGORITHM || 'HS256',
     accessTokenExpireMinutes: process.env.ACCESS_TOKEN_EXPIRE_MINUTES || '1440',
     paystackSecretKey: process.env.PAYSTACK_SECRET_KEY || 'sk_test_mock_secret_key',

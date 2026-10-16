@@ -4,9 +4,9 @@
       <div class="footer__grid">
         <!-- Brand Info Column -->
         <div class="footer__col footer__col--brand">
-          <img src="/logo.png" alt="EL. Kelvinero Logo" class="footer__logo" />
+          <img src="/logo.png" alt="TZORAH EMPORIUM Logo" class="footer__logo" />
           <p class="footer__bio">
-            Redefining modern style with quality, simplicity, and purpose.
+            Curators of pure USA perfume oils, Middle Eastern scents, botanical oils, candlecraft, and discreet adult luxuries.
           </p>
           <div class="footer__socials">
             <a href="#" aria-label="Instagram" class="footer__social-link">
@@ -28,14 +28,15 @@
 
         <!-- Shop Links Column -->
         <div class="footer__col">
-          <h4 class="footer__col-title">SHOP</h4>
+          <h4 class="footer__col-title">DEPARTMENTS</h4>
           <ul class="footer__links">
             <li><NuxtLink to="/shop" class="footer__link hover-underline">All Products</NuxtLink></li>
-            <li><NuxtLink to="/shop" class="footer__link hover-underline">New Arrivals</NuxtLink></li>
-            <li><NuxtLink to="/shop" class="footer__link hover-underline">T-Shirts</NuxtLink></li>
-            <li><NuxtLink to="/shop" class="footer__link hover-underline">Hoodies</NuxtLink></li>
-            <li><NuxtLink to="/shop" class="footer__link hover-underline">Pants</NuxtLink></li>
-            <li><NuxtLink to="/shop" class="footer__link hover-underline">Accessories</NuxtLink></li>
+            <li><NuxtLink to="/shop?cat=PERFUMES" class="footer__link hover-underline">Perfumes & Scents</NuxtLink></li>
+            <li><NuxtLink to="/shop?cat=OILS" class="footer__link hover-underline">The Oils Bar</NuxtLink></li>
+            <li><NuxtLink to="/shop?cat=CANDLE%20MAKING%20ACCESSORIES" class="footer__link hover-underline">Candle Craft Supplies</NuxtLink></li>
+            <li><NuxtLink to="/shop?cat=UNSCENTED%20PRODUCTS" class="footer__link hover-underline">Unscented Products</NuxtLink></li>
+            <li><NuxtLink to="/shop?cat=PET%20BODY%20CARE%20PRODUCTS" class="footer__link hover-underline">Pet Body Care</NuxtLink></li>
+            <li><NuxtLink to="/shop?cat=ADULT%20SECTION" class="footer__link hover-underline">Adult Boudoir (18+)</NuxtLink></li>
           </ul>
         </div>
 
@@ -44,7 +45,6 @@
           <h4 class="footer__col-title">COMPANY</h4>
           <ul class="footer__links">
             <li><NuxtLink to="/about" class="footer__link hover-underline">About Us</NuxtLink></li>
-            <li><NuxtLink to="/lookbook" class="footer__link hover-underline">Lookbook</NuxtLink></li>
             <li><NuxtLink to="/journal" class="footer__link hover-underline">Journal</NuxtLink></li>
             <li><a href="#" class="footer__link hover-underline">Our Stores</a></li>
             <li><a href="#" class="footer__link hover-underline">Careers</a></li>
@@ -90,7 +90,7 @@
       <!-- Footer Bottom -->
       <div class="footer__bottom">
         <p class="footer__copyright">
-          &copy; {{ new Date().getFullYear() }} {{ storeSettings.storeName || 'EL. KELVINERO' }}. All rights reserved.
+          &copy; {{ new Date().getFullYear() }} {{ storeSettings.storeName || 'TZORAH EMPORIUM' }}. All rights reserved.
         </p>
         <p v-if="storeSettings.supportEmail" class="footer__contact-line">
           <a :href="'mailto:' + storeSettings.supportEmail" class="footer__contact-email">{{ storeSettings.supportEmail }}</a>

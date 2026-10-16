@@ -99,24 +99,24 @@ const ShieldIcon = () => h(
 
 const featureList = [
   {
-    icon: TShirtIcon,
-    title: 'PREMIUM QUALITY',
-    description: 'Finest fabrics, crafted for comfort and durability.'
-  },
-  {
-    icon: HangerIcon,
-    title: 'TIMELESS DESIGN',
-    description: 'Clean, refined pieces that never go out of style.'
+    icon: ShieldIcon,
+    title: '100% AUTHENTIC PERFUMES',
+    description: 'USA pure perfume oils, Middle Eastern attars, and genuine designer scents.'
   },
   {
     icon: GlobeIcon,
-    title: 'GLOBAL SHIPPING',
-    description: 'Delivering to your doorstep, anywhere in the world.'
+    title: 'THE OILS ALCHEMY BAR',
+    description: 'Therapeutic essential oils, cosmetic fragrance oils & natural carrier oils.'
   },
   {
-    icon: ShieldIcon,
-    title: 'SECURE PAYMENTS',
-    description: 'Safe, encrypted checkout you can trust.'
+    icon: HangerIcon,
+    title: 'CANDLECRAFT & PET CARE',
+    description: 'Pure soy waxes, cotton wicks, unscented bases, and gentle pet body care.'
+  },
+  {
+    icon: TShirtIcon,
+    title: 'DISCREET ADULT LUXURIES',
+    description: 'Body-safe adult toys & fine Mulberry silk lingeries with 100% discreet packaging.'
   }
 ]
 </script>

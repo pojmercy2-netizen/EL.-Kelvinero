@@ -57,28 +57,28 @@ const toggle = (idx) => {
 
 const faqs = [
   {
-    q: 'What materials do you use in your garments?',
-    a: 'We use only premium, responsibly sourced fabrics — including brushed French terry, Pima cotton, and heavyweight fleece. Every piece is crafted for durability, comfort, and timeless style.'
+    q: 'Are your USA and Middle Eastern perfume oils 100% authentic and undiluted?',
+    a: 'Yes. All our USA perfume oils, Middle Eastern attars, and designer perfumes are sourced directly from authenticated fragrance laboratories and distributors. Our oils are 100% pure, alcohol-free, and designed for 24+ hour skin and fabric projection.'
   },
   {
-    q: 'How long does delivery take?',
-    a: 'Standard delivery takes 3–7 business days. Express delivery (1–2 business days) is available at checkout. International orders may take 7–14 business days depending on location.'
+    q: 'How are your oils categorized?',
+    a: 'All oils are organized under our "OILS" category with dedicated subcategories: Fragrance Oils (for personal scent, body oils, and candle making), Essential Oils (100% steam-distilled pure botanical essences for aromatherapy), and Natural Oils (pure cold-pressed carrier oils like Jojoba, Argan, and Almond).'
   },
   {
-    q: 'Can I return or exchange an item?',
-    a: 'Yes. We accept returns and exchanges within 30 days of delivery, provided items are unworn, unwashed, and in original packaging. Visit our returns page or contact us to initiate a return.'
+    q: 'Are orders from the Adult Section shipped discreetly?',
+    a: 'Absolutely. All adult wellness toys and luxury lingerie orders are shipped in 100% plain, tamper-evident, unmarked boxes with neutral shipping labels. Your privacy and discretion are completely protected.'
   },
   {
-    q: 'How do I find the right size?',
-    a: 'Each product page includes a full size guide with chest, waist, and length measurements. If you\'re between sizes, we generally recommend sizing up for a relaxed fit.'
+    q: 'Can your candle making supplies be used by beginners and artisans?',
+    a: 'Yes! We stock premium golden soy wax flakes, pre-waxed cotton wicks with sustainers, precision melting pitchers, and candle-grade fragrance oils suitable for both hobbyists and commercial candle makers.'
   },
   {
-    q: 'Do you ship internationally?',
-    a: 'Yes, we ship worldwide. Shipping rates and estimated delivery times are calculated at checkout based on your location.'
+    q: 'Are pet body care products safe for sensitive dogs and cats?',
+    a: 'Yes. Our calming oatmeal pet washes, coat sprays, and paw protection balms are crafted from non-toxic, lick-safe, natural ingredients formulated to soothe skin without harsh sulfates or synthetic irritants.'
   },
   {
-    q: 'How do I care for my EL. Kelvinero pieces?',
-    a: 'Machine wash cold with like colours, gentle cycle. Tumble dry low or lay flat to dry. Avoid ironing directly on any printed logos or graphics. Full care instructions are on each garment tag.'
+    q: 'What are your delivery timelines and fees?',
+    a: 'We offer express delivery within Lagos (same-day or next-day) and standard nationwide delivery across Nigeria within 2–4 business days. Free shipping is automatically applied on all orders above ₦50,000.'
   }
 ]
 </script>

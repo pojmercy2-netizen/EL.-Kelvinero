@@ -13,8 +13,8 @@ export function verifyPassword(password: string, hash: string): boolean {
 
 export function createAccessToken(data: { sub: string }): string {
   const config = useRuntimeConfig()
-  const secretKey = config.secretKey || 'el-kelvinero-secret-key-development-2026-secure'
-  const expireMinutes = parseInt(config.accessTokenExpireMinutes || '1440', 10)
+  const secretKey = (config.secretKey as string) || 'tzorah-emporium-secret-key-development-2026-secure'
+  const expireMinutes = parseInt((config.accessTokenExpireMinutes as string) || '1440', 10)
 
   return jwt.sign(data, secretKey, {
     expiresIn: `${expireMinutes}m`
@@ -23,7 +23,7 @@ export function createAccessToken(data: { sub: string }): string {
 
 export function decodeToken(token: string): { sub: string } | null {
   const config = useRuntimeConfig()
-  const secretKey = config.secretKey || 'el-kelvinero-secret-key-development-2026-secure'
+  const secretKey = (config.secretKey as string) || 'tzorah-emporium-secret-key-development-2026-secure'
   try {
     return jwt.verify(token, secretKey) as { sub: string }
   } catch {
@@ -37,7 +37,10 @@ export async function getCurrentUser(event: H3Event) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized',
-      message: 'Could not validate credentials'
+      message: 'Could not validate credentials',
+      data: {
+        detail: 'Could not validate credentials'
+      }
     })
   }
 
@@ -47,18 +50,24 @@ export async function getCurrentUser(event: H3Event) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized',
-      message: 'Could not validate credentials'
+      message: 'Could not validate credentials',
+      data: {
+        detail: 'Could not validate credentials'
+      }
     })
   }
 
-  const res = await query('SELECT id, name, email, is_admin, created_at FROM users WHERE email = ?', [decoded.sub])
+  const res = await query('SELECT id, name, email, is_admin, created_at FROM users WHERE LOWER(email) = LOWER(?)', [decoded.sub])
   const user = res.rows[0]
 
   if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized',
-      message: 'Could not validate credentials'
+      message: 'Could not validate credentials',
+      data: {
+        detail: 'User not found or session expired'
+      }
     })
   }
 
@@ -74,7 +83,10 @@ export async function requireAdmin(event: H3Event) {
     throw createError({
       statusCode: 403,
       statusMessage: 'Forbidden',
-      message: 'Admin access required'
+      message: 'Admin access required',
+      data: {
+        detail: 'Admin access required'
+      }
     })
   }
   return user

@@ -21,7 +21,7 @@
         <div class="jr-featured__image">
           <img :src="featuredPost.image" :alt="featuredPost.title" />
           <div class="img-logo-overlay img-logo-overlay--br">
-            <img src="/logo.png" alt="EL. Kelvinero" />
+            <img src="/logo.png" alt="TZORAH EMPORIUM" />
           </div>
         </div>
 
@@ -55,7 +55,7 @@
           <div class="jr-card__image">
             <img :src="post.image" :alt="post.title" />
             <div class="img-logo-overlay img-logo-overlay--br">
-              <img src="/logo.png" alt="EL. Kelvinero" />
+              <img src="/logo.png" alt="TZORAH EMPORIUM" />
             </div>
           </div>
 
@@ -87,45 +87,36 @@
 import { ref, computed } from 'vue'
 
 useHead({
-  title: 'The Journal | EL. Kelvinero',
-  meta: [{ name: 'description', content: 'Explore editorial stories on style, design, and heritage from the EL. Kelvinero studio.' }]
+  title: 'The Journal | TZORAH EMPORIUM',
+  meta: [{ name: 'description', content: 'Explore editorial stories on the art of perfume oils, steam-distilled essences, candlecraft, and sensual wellness from TZORAH EMPORIUM.' }]
 })
 
 const posts = ref([
   {
-    slug: 'the-art-of-minimal-tailoring',
-    title: 'The Art of Minimal Tailoring: Less is More',
-    category: 'EDITORIAL',
-    date: 'July 24, 2026',
-    excerpt: 'Exploring how contemporary structures blend with traditional tailoring styles to create silhouettes that make a statement through quiet luxury.',
-    image: '/images/lookbook_hero.png',
+    slug: 'the-alchemy-of-usa-oil-perfumes',
+    title: 'The Alchemy of USA Oil Perfumes: Why Concentrated Oils Last Longer',
+    category: 'OLFACTORY',
+    date: 'August 12, 2026',
+    excerpt: 'Exploring how unadulterated oil mediums bind to skin lipids, unlocking multifaceted scent projection that persists 24+ hours without alcohol drying.',
+    image: '/images/or_hero.png',
     featured: true
   },
   {
-    slug: 'heritage-craftsmanship-woven-label',
-    title: 'Heritage Craftsmanship: Behind the Woven Label',
-    category: 'CRAFT',
-    date: 'July 18, 2026',
-    excerpt: 'An inside look into our weaving workshops where premium cotton loops and double-stitch finishes are combined to create garments built to endure.',
-    image: '/images/about_label_collar.png',
+    slug: 'guide-to-botanical-essential-oils',
+    title: 'Steam Distillation & Therapeutic Botanical Oils',
+    category: 'WELLNESS',
+    date: 'August 04, 2026',
+    excerpt: 'A comprehensive journey through French Lavender, Australian Tea Tree, and Royal Frankincense for aromatherapy and personal formulations.',
+    image: '/images/or_oils.png',
     featured: false
   },
   {
-    slug: 'style-guide-neutral-layering',
-    title: 'Style Guide: Mastering the Art of Neutral Layering',
-    category: 'STYLE',
-    date: 'June 30, 2026',
-    excerpt: 'Step-by-step editorial guidelines on styling tan, cream, and olive garments to build cohesive silhouettes matching the seasonal shift.',
-    image: '/images/about_hero_model.png',
-    featured: false
-  },
-  {
-    slug: 'architectural-lines-modern-fashion',
-    title: 'Architectural Lines and Contemporary Space in Fashion',
-    category: 'DESIGN',
-    date: 'June 12, 2026',
-    excerpt: 'How geometric gallery architecture influences modern collar lines and pocket seam geometries for our latest SS2025 capsule release.',
-    image: '/images/brand_bg.png',
+    slug: 'crafting-luxury-scented-candles',
+    title: 'The Artisan’s Guide to Soy Wax & Fragrance Load Ratios',
+    category: 'CANDLECRAFT',
+    date: 'July 28, 2026',
+    excerpt: 'Mastering temperature control, cotton wick sustainers, and hot scent throw when pouring handcrafted home candles.',
+    image: '/images/products/candle_1.png',
     featured: false
   }
 ])

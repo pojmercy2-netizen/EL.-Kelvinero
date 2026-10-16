@@ -1,5 +1,5 @@
 export default defineEventHandler(() => {
   return {
-    message: "Logged out successfully. Please discard your token."
+    message: 'Logged out successfully. Please discard your token.'
   }
 })

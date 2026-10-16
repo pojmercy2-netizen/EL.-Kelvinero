@@ -3,9 +3,9 @@
     <div class="container">
       <!-- Section Header -->
       <div class="section-header">
-        <h2 class="section-title">NEW ARRIVALS</h2>
+        <h2 class="section-title">TZORAH EMPORIUM ESSENTIALS</h2>
         <NuxtLink to="/shop" class="section-link hover-underline">
-          VIEW ALL
+          VIEW ALL PRODUCTS
           <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
@@ -19,10 +19,10 @@
           <div class="product-card__image-container">
             <img :src="product.image" :alt="product.name" class="product-card__img" />
             
-            <!-- Logo printed on the chest of the shirt/clothing -->
-            <div v-if="product.logoColor" :class="['product-card__chest-logo', 'product-card__chest-logo--' + product.logoColor]">
-              <img src="/logo.png" alt="EL. Kelvinero Logo" />
-            </div>
+            <!-- Category / Subcategory Badge -->
+            <span class="product-card__badge" v-if="product.subcategory || product.category">
+              {{ product.subcategory || product.category }}
+            </span>
 
             <div class="product-card__overlay">
               <button class="product-card__quick-add" @click="addToCart(product)">
@@ -31,7 +31,7 @@
                   <line x1="3" y1="6" x2="21" y2="6"></line>
                   <path d="M16 10a4 4 0 0 1-8 0"></path>
                 </svg>
-                QUICK ADD
+                ADD TO CART
               </button>
             </div>
           </div>
@@ -55,16 +55,16 @@ const { storeSettings } = useStoreSettings()
 
 const currencySymbol = computed(() => storeSettings.value.currency === 'NGN' ? '₦' : '$')
 
-// Initial fallback set of 8 products representing all shop categories
+// Initial fallback set of 8 products representing Or. Store categories
 const defaultProducts = [
-  { id: 'p1', name: 'SIGNATURE TEE', price: 59.00, image: '/images/product_tee.png', logoColor: 'light' },
-  { id: 'p2', name: 'CLASSIC HOODIE', price: 89.00, image: '/images/product_hoodie.png', logoColor: 'dark' },
-  { id: 'p3', name: 'OVERSIZE SWEATSHIRT', price: 79.00, image: '/images/product_sweatshirt.png', logoColor: 'light' },
-  { id: 'p4', name: 'KNIT POLO', price: 89.00, image: '/images/product_polo.png', logoColor: 'dark' },
-  { id: 'p5', name: 'HERITAGE JACKET', price: 120.00, image: '/images/about_heritage.png', logoColor: 'light' },
-  { id: 'p6', name: 'EDITORIAL COAT', price: 140.00, image: '/images/lookbook_editorial_1.png', logoColor: 'dark' },
-  { id: 'p7', name: 'REFINED SWEATSHIRT', price: 85.00, image: '/images/lookbook_editorial_2.png', logoColor: 'light' },
-  { id: 'p8', name: 'ESSENTIAL HOODIE', price: 95.00, image: '/images/lookbook_editorial_3.png', logoColor: 'dark' }
+  { id: 'perf_usa_1', name: 'Baccarat Rouge 540 Pure Oil (USA)', price: 38500, image: '/images/products/perf_usa_1.png', category: 'PERFUMES', subcategory: 'USA Oil Perfumes' },
+  { id: 'perf_me_1', name: 'Lattafa Khamrah Royale EDP', price: 48000, image: '/images/products/perf_me_1.png', category: 'PERFUMES', subcategory: 'Middle Eastern' },
+  { id: 'perf_des_1', name: 'Bleu de Chanel Eau de Parfum', price: 185000, image: '/images/products/perf_des_1.png', category: 'PERFUMES', subcategory: 'Authentic Designer' },
+  { id: 'oil_frag_1', name: 'Golden Amber & Musk Fragrance Oil', price: 18500, image: '/images/products/oil_frag_1.png', category: 'OILS', subcategory: 'Fragrance Oils' },
+  { id: 'oil_ess_1', name: '100% Pure French Lavender Oil', price: 12500, image: '/images/products/oil_ess_1.png', category: 'OILS', subcategory: 'Essential Oils' },
+  { id: 'oil_nat_1', name: 'Cold-Pressed Golden Jojoba Oil', price: 15000, image: '/images/products/oil_nat_1.png', category: 'OILS', subcategory: 'Natural Oils' },
+  { id: 'candle_1', name: 'Golden Soy Wax Flakes (1kg)', price: 16500, image: '/images/products/candle_1.png', category: 'CANDLE ACCESSORIES', subcategory: 'Wax Flakes' },
+  { id: 'adult_toy_1', name: 'Whisper Luxe Ergonomic Wand', price: 38000, image: '/images/products/adult_toy_1.png', category: 'ADULT SECTION', subcategory: 'Adult Toys' }
 ]
 
 const liveProducts = ref([])
@@ -74,8 +74,9 @@ const mapProduct = (p) => ({
   name: p.name,
   price: parseFloat(p.price),
   priceFormatted: `${currencySymbol.value}${parseFloat(p.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
-  image: p.image || '/images/product_tee.png',
-  logoColor: p.logoColor || 'light'
+  image: p.image || '/images/products/perf_usa_1.png',
+  category: p.category,
+  subcategory: p.subcategory
 })
 
 // Async data fetch on server & client
@@ -101,7 +102,6 @@ onMounted(loadLiveProducts)
 // Computed list always displaying 8 items
 const displayProducts = computed(() => {
   let list = liveProducts.value.length > 0 ? liveProducts.value : defaultProducts.map(mapProduct)
-  // If backend returns fewer than 8 products, pad with default items to ensure 8 items display
   if (list.length < 8) {
     const pad = defaultProducts.slice(list.length, 8).map(mapProduct)
     list = [...list, ...pad]
@@ -163,35 +163,22 @@ const addToCart = (product) => {
   background-color: #ebe7e0;
 }
 
-.product-card__chest-logo {
+.product-card__badge {
   position: absolute;
-  top: 38%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 32px;
-  opacity: 0.65;
-  pointer-events: none;
-  z-index: 1;
-  mix-blend-mode: overlay;
-  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.product-card__chest-logo img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.product-card__chest-logo--dark img {
-  filter: brightness(0);
-}
-
-.product-card__chest-logo--light img {
-  filter: brightness(0) invert(1);
-}
-
-.product-card:hover .product-card__chest-logo {
-  transform: translate(-50%, -50%) scale(1.06);
+  top: 12px;
+  left: 12px;
+  background-color: rgba(18, 18, 18, 0.78);
+  backdrop-filter: blur(4px);
+  color: var(--color-accent);
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 0.35rem 0.65rem;
+  border-radius: 2px;
+  text-transform: uppercase;
+  z-index: 2;
+  border: 1px solid rgba(218, 178, 126, 0.3);
 }
 
 .product-card__img {

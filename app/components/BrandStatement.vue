@@ -4,22 +4,21 @@
       <!-- Left Column (Brand philosophy) -->
       <div class="brand-statement__content">
         <h2 class="brand-statement__title">
-          BEYOND TRENDS.<br />BEYOND SEASONS.
+          BEYOND TRENDS.<br />THE ART OF SCENT & TOUCH.
         </h2>
         <div class="brand-statement__divider"></div>
         <p class="brand-statement__text">
-          EL. Kelvinero pieces are designed to move with you—every day, everywhere.
+          At TZORAH EMPORIUM, we curate olfactory treasures and sensual wellness with uncompromising standards. Pure undiluted perfume oils, rare Arabian attars, organic cold-pressed botanicals, and discreet private luxuries.
         </p>
-        <button class="btn btn-secondary" @click="discoverMore">DISCOVER MORE</button>
+        <NuxtLink to="/shop" class="btn btn-secondary">EXPLORE CATALOGUE</NuxtLink>
       </div>
       
       <!-- Right Column (Visual asset and logo overlay) -->
       <div class="brand-statement__visual">
-        <img src="/images/brand_bg.png" alt="Fabric details of EL. Kelvinero garments" class="brand-statement__bg-image" />
+        <img src="/images/brand_bg.png" alt="TZORAH EMPORIUM Brand Philosophy" class="brand-statement__bg-image" />
         <div class="brand-statement__visual-overlay"></div>
         <div class="brand-statement__logo-wrapper">
-          <!-- Inverting the black logo using CSS filter to make it silver/white -->
-          <img src="/logo.png" alt="EL. Kelvinero Logo Shield" class="brand-statement__brand-seal" />
+          <img src="/logo.png" alt="TZORAH EMPORIUM Emblem" class="brand-statement__brand-seal" />
         </div>
       </div>
     </div>

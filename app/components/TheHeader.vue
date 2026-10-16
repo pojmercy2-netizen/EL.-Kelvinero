@@ -10,14 +10,23 @@
 
       <!-- Logo (desktop left / mobile centre) -->
       <NuxtLink to="/" class="header__logo-link">
-        <img src="/logo.png" alt="EL. Kelvinero Logo" class="header__logo" />
+        <img src="/logo.png" alt="TZORAH EMPORIUM Logo" class="header__logo" />
       </NuxtLink>
 
       <!-- Nav Links (Desktop) -->
       <nav class="header__nav">
         <ul class="header__nav-list">
-          <li v-for="item in navItems" :key="item.label">
-            <NuxtLink :to="item.href" class="header__nav-link hover-underline">{{ item.label }}</NuxtLink>
+          <li>
+            <NuxtLink to="/" class="header__nav-link hover-underline">HOME</NuxtLink>
+          </li>
+
+          <!-- Shop Link -->
+          <li>
+            <NuxtLink to="/shop" class="header__nav-link hover-underline">SHOP</NuxtLink>
+          </li>
+
+          <li>
+            <NuxtLink to="/about" class="header__nav-link hover-underline">ABOUT US</NuxtLink>
           </li>
         </ul>
       </nav>
@@ -50,7 +59,7 @@
         </NuxtLink>
       </div>
     </div>
-    
+
     <!-- Mobile Navigation Slide-out -->
     <Transition name="fade">
       <div v-if="mobileMenuOpen" class="mobile-drawer__overlay" @click="closeMobileMenu"></div>
@@ -58,7 +67,7 @@
     <div :class="['mobile-drawer', { 'mobile-drawer--open': mobileMenuOpen }]">
       <div class="mobile-drawer__content">
         <div class="mobile-drawer__header">
-          <img src="/logo.png" alt="EL. Kelvinero Logo" class="mobile-drawer__logo" />
+          <img src="/logo.png" alt="TZORAH EMPORIUM Logo" class="mobile-drawer__logo" />
           <button class="mobile-drawer__close" @click="closeMobileMenu">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -68,28 +77,24 @@
         </div>
         <nav class="mobile-drawer__nav">
           <ul class="mobile-drawer__list">
-            <li
-              v-for="(item, index) in navItems"
-              :key="item.label"
-              class="mobile-drawer__item"
-              :style="{ animationDelay: mobileMenuOpen ? `${0.08 + index * 0.07}s` : '0s' }"
-              :class="{ 'mobile-drawer__item--visible': mobileMenuOpen }"
-            >
-              <NuxtLink :to="item.href" class="mobile-drawer__link" @click="closeMobileMenu">{{ item.label }}</NuxtLink>
+            <li class="mobile-drawer__item mobile-drawer__item--visible">
+              <NuxtLink to="/" class="mobile-drawer__link" @click="closeMobileMenu">HOME</NuxtLink>
             </li>
-            <li
-              class="mobile-drawer__item"
-              :style="{ animationDelay: mobileMenuOpen ? `${0.08 + navItems.length * 0.07}s` : '0s' }"
-              :class="{ 'mobile-drawer__item--visible': mobileMenuOpen }"
-            >
+
+            <!-- Mobile Shop Link -->
+            <li class="mobile-drawer__item mobile-drawer__item--visible">
+              <NuxtLink to="/shop" class="mobile-drawer__link" @click="closeMobileMenu">SHOP</NuxtLink>
+            </li>
+
+            <li class="mobile-drawer__item mobile-drawer__item--visible">
+              <NuxtLink to="/about" class="mobile-drawer__link" @click="closeMobileMenu">ABOUT US</NuxtLink>
+            </li>
+
+            <li class="mobile-drawer__item mobile-drawer__item--visible">
               <a href="/profile" class="mobile-drawer__link" @click.prevent="handleProfileClickMobile">ACCOUNT</a>
             </li>
-            <li
-              v-if="currentUser?.isAdmin"
-              class="mobile-drawer__item"
-              :style="{ animationDelay: mobileMenuOpen ? `${0.08 + (navItems.length + 1) * 0.07}s` : '0s' }"
-              :class="{ 'mobile-drawer__item--visible': mobileMenuOpen }"
-            >
+
+            <li v-if="currentUser?.isAdmin" class="mobile-drawer__item mobile-drawer__item--visible">
               <NuxtLink to="/admin/dashboard" class="mobile-drawer__link mobile-drawer__link--admin" @click="closeMobileMenu">ADMIN CONSOLE</NuxtLink>
             </li>
           </ul>
@@ -98,59 +103,57 @@
         <!-- Social Links -->
         <div class="mobile-drawer__socials">
           <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" target="_blank" rel="noopener" aria-label="WhatsApp" class="mobile-drawer__social">
-            <!-- WhatsApp -->
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </a>
+        <a href="https://www.tiktok.com/@tzorahemporium" target="_blank" rel="noopener" aria-label="TikTok" class="mobile-drawer__social">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.77a4.85 4.85 0 01-1.01-.08z"/>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/tzorahemporium" target="_blank" rel="noopener" aria-label="Instagram" class="mobile-drawer__social">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+        </a>
+        <a href="https://x.com/tzorahemporium" target="_blank" rel="noopener" aria-label="X (Twitter)" class="mobile-drawer__social">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4l11.733 16h4.267l-11.733-16z"/>
+            <path d="M4 20l6.768-6.768M20 4l-6.768 6.768"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Overlay -->
+  <Transition name="fade-slide">
+    <div v-if="searchOpen" class="search-overlay">
+      <div class="container search-overlay__container">
+        <div class="search-overlay__search-box">
+          <input type="text" placeholder="Search USA oils, perfumes, essential oils, candle craft, adult section..." class="search-overlay__input" ref="searchInput" @keyup.enter="performSearch" />
+          <button class="search-overlay__close" @click="toggleSearch">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
-          </a>
-          <a href="https://www.tiktok.com/@elkelvinero" target="_blank" rel="noopener" aria-label="TikTok" class="mobile-drawer__social">
-            <!-- TikTok -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.77a4.85 4.85 0 01-1.01-.08z"/>
-            </svg>
-          </a>
-          <a href="https://www.instagram.com/elkelvinero" target="_blank" rel="noopener" aria-label="Instagram" class="mobile-drawer__social">
-            <!-- Instagram -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-            </svg>
-          </a>
-          <a href="https://x.com/elkelvinero" target="_blank" rel="noopener" aria-label="X (Twitter)" class="mobile-drawer__social">
-            <!-- X / Twitter -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 4l11.733 16h4.267l-11.733-16z"/>
-              <path d="M4 20l6.768-6.768M20 4l-6.768 6.768"/>
-            </svg>
-          </a>
+          </button>
         </div>
       </div>
     </div>
-
-    <!-- Search Overlay -->
-    <Transition name="fade-slide">
-      <div v-if="searchOpen" class="search-overlay">
-        <div class="container search-overlay__container">
-          <div class="search-overlay__search-box">
-            <input type="text" placeholder="Search our collection..." class="search-overlay__input" ref="searchInput" @keyup.enter="performSearch" />
-            <button class="search-overlay__close" @click="toggleSearch">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </Transition>
-  </header>
+  </Transition>
+</header>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAuth } from '~/composables/useAuth'
 
+const route = useRoute()
 const { handleProfileClick, currentUser } = useAuth()
 
 const isScrolled = ref(false)
@@ -159,21 +162,18 @@ const searchOpen = ref(false)
 const animateCart = ref(false)
 const searchInput = ref(null)
 
+
+// Close on route change
+watch(() => route.fullPath, () => {
+  mobileMenuOpen.value = false
+})
+
 const handleProfileClickMobile = (e) => {
   closeMobileMenu()
   handleProfileClick(e)
 }
 
 const cartCount = useState('cartCount', () => 0)
-
-const navItems = [
-  { label: 'HOME', href: '/' },
-  { label: 'COLLECTION', href: '/collection' },
-  { label: 'SHOP', href: '/shop' },
-  { label: 'LOOKBOOK', href: '/lookbook' },
-  { label: 'ABOUT US', href: '/about' },
-  { label: 'JOURNAL', href: '/journal' }
-]
 
 // Listen to scroll to add background and shadow
 const handleScroll = () => {
@@ -184,13 +184,23 @@ const handleScroll = () => {
   }
 }
 
+// Click outside and keydown listeners
+const handleKeyDown = (e) => {
+  if (e.key === 'Escape') {
+    searchOpen.value = false
+    mobileMenuOpen.value = false
+  }
+}
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
+  window.addEventListener('keydown', handleKeyDown)
   handleScroll()
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('keydown', handleKeyDown)
 })
 
 const toggleMobileMenu = () => {
@@ -222,11 +232,6 @@ const showToast = (message) => {
     id: Date.now(),
     message
   })
-}
-
-const toggleCartDrawer = () => {
-  const cartDrawerOpen = useState('cartDrawerOpen', () => false)
-  cartDrawerOpen.value = !cartDrawerOpen.value
 }
 
 const { storeSettings } = useStoreSettings()
@@ -277,7 +282,7 @@ watch(cartCount, () => {
 }
 
 .header__logo {
-  height: 110px;
+  height: 60px;
   width: auto;
   object-fit: contain;
   transition: var(--transition-smooth);
@@ -285,7 +290,7 @@ watch(cartCount, () => {
 }
 
 .header--scrolled .header__logo {
-  height: 90px;
+  height: 50px;
 }
 
 /* Nav Styles */
@@ -297,6 +302,7 @@ watch(cartCount, () => {
   display: flex;
   list-style: none;
   gap: 2.5rem;
+  align-items: center;
 }
 
 .header__nav-link {
@@ -305,6 +311,36 @@ watch(cartCount, () => {
   letter-spacing: 0.15em;
   color: var(--color-text-dark);
   padding: 0.5rem 0;
+  transition: color var(--transition-fast);
+}
+
+/* Shop Nav Item & Dropdown Trigger */
+.header__nav-item--shop {
+  position: relative;
+}
+
+.header__shop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.header__shop-btn:hover,
+.header__shop-btn--active {
+  color: var(--color-accent);
+}
+
+.header__shop-chevron {
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.header__shop-chevron--open {
+  transform: rotate(180deg);
+  stroke: var(--color-accent);
 }
 
 /* Actions Styles */
@@ -402,7 +438,230 @@ watch(cartCount, () => {
   transform: translateY(-6.5px) rotate(-45deg);
 }
 
-/* Mobile Drawer Styles */
+/* ══════════════════════════════════════════════════════ */
+/* DESKTOP SHOP MEGA MENU                                 */
+/* ══════════════════════════════════════════════════════ */
+.shop-mega-menu__overlay {
+  position: fixed;
+  top: calc(var(--header-height) + 36px);
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(3px);
+  z-index: 95;
+}
+
+.shop-mega-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-top: 1px solid rgba(184, 152, 116, 0.25);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  z-index: 98;
+}
+
+.shop-mega-menu__container {
+  display: grid;
+  grid-template-columns: 1.45fr 1px 1fr;
+  gap: 2.5rem;
+  padding: 2.2rem 1rem 1.8rem 1rem;
+}
+
+.shop-mega-divider {
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, rgba(184, 152, 116, 0.35), transparent);
+}
+
+.shop-mega-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.shop-mega-col__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.4rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.shop-mega-col__title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.shop-mega-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent-dark);
+  background: rgba(184, 152, 116, 0.12);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.shop-mega-badge--adult {
+  color: #b82b2b;
+  background: rgba(184, 43, 43, 0.1);
+}
+
+.shop-mega-title {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: #111;
+  line-height: 1;
+}
+
+.shop-mega-all-link {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent-dark);
+  transition: all 0.2s ease;
+}
+
+.shop-mega-all-link:hover {
+  color: #111;
+  transform: translateX(3px);
+}
+
+.shop-mega-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.shop-mega-grid--adult {
+  grid-template-columns: 1fr 1.2fr;
+  align-items: start;
+}
+
+.shop-mega-group__title {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent-dark);
+  margin-bottom: 0.75rem;
+}
+
+.shop-mega-group__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.shop-mega-link {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.35;
+  display: block;
+  transition: all 0.2s ease;
+}
+
+.shop-mega-link:hover {
+  color: var(--color-accent);
+  transform: translateX(3px);
+}
+
+/* Discretion Guarantee Card */
+.shop-mega-discreet-card {
+  background: #181818;
+  color: #ffffff;
+  padding: 1.1rem 1.25rem;
+  border-radius: 6px;
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  border: 1px solid rgba(184, 152, 116, 0.3);
+}
+
+.shop-mega-discreet-icon {
+  color: var(--color-accent);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.shop-mega-discreet-text h5 {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  margin-bottom: 0.35rem;
+}
+
+.shop-mega-discreet-text p {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.45;
+}
+
+/* Mega menu footer */
+.shop-mega-menu__footer {
+  background: #faf8f5;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 0.85rem 0;
+}
+
+.shop-mega-footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shop-mega-footer-tag {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.shop-mega-footer-cta {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--color-accent-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.shop-mega-footer-cta:hover {
+  color: #111;
+}
+
+/* Mega menu transitions */
+.mega-slide-enter-active,
+.mega-slide-leave-active {
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mega-slide-enter-from,
+.mega-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* ══════════════════════════════════════════════════════ */
+/* MOBILE DRAWER STYLES                                  */
+/* ══════════════════════════════════════════════════════ */
 .mobile-drawer {
   position: fixed;
   top: 0;
@@ -437,6 +696,7 @@ watch(cartCount, () => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .mobile-drawer__header {
@@ -447,7 +707,7 @@ watch(cartCount, () => {
 }
 
 .mobile-drawer__logo {
-  height: 150px;
+  height: 60px;
   width: auto;
   object-fit: contain;
 }
@@ -468,7 +728,6 @@ watch(cartCount, () => {
   list-style: none;
 }
 
-/* Each item starts hidden/shifted left, flies in when drawer opens */
 .mobile-drawer__item {
   opacity: 0;
   transform: translateX(-30px);
@@ -504,25 +763,9 @@ watch(cartCount, () => {
   transition: color 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Sliding gold underline — grows from left to right on hover */
-.mobile-drawer__link::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: var(--color-accent);
-  transition: width 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
 .mobile-drawer__link:hover {
   color: var(--color-accent);
-  transform: translateX(8px);
-}
-
-.mobile-drawer__link:hover::after {
-  width: 100%;
+  transform: translateX(6px);
 }
 
 .mobile-drawer__link--admin {
@@ -531,6 +774,120 @@ watch(cartCount, () => {
 }
 .mobile-drawer__link--admin:hover {
   color: #d4aa82 !important;
+}
+
+/* Accordion in Mobile Drawer */
+.mobile-drawer__accordion-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mobile-drawer__chevron {
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  color: var(--color-text-dark);
+}
+
+.mobile-drawer__chevron--open {
+  transform: rotate(180deg);
+  color: var(--color-accent);
+}
+
+.mobile-drawer__sublist {
+  padding: 0.6rem 0 0.8rem 0.75rem;
+  margin: 0.35rem 0 0.75rem 0.25rem;
+  border-left: 2px solid rgba(184, 152, 116, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mobile-drawer__group {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-drawer__group-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0;
+  cursor: pointer;
+}
+
+.mobile-drawer__group-title {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent-dark);
+}
+
+.mobile-drawer__group-title--adult {
+  color: #b82b2b;
+}
+
+.mobile-drawer__chevron-sm {
+  transition: transform 0.25s ease;
+  color: #888;
+}
+
+.mobile-drawer__chevron-sm--open {
+  transform: rotate(180deg);
+  color: var(--color-accent);
+}
+
+.mobile-drawer__nested-list {
+  list-style: none;
+  padding: 0.25rem 0 0.4rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.mobile-drawer__sublink {
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  color: #444;
+  padding: 0.25rem 0;
+  display: block;
+  transition: all 0.2s ease;
+}
+
+.mobile-drawer__sublink:hover {
+  color: var(--color-accent);
+  transform: translateX(4px);
+}
+
+.mobile-drawer__sublink--all {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent-dark);
+}
+
+.mobile-drawer__all-products {
+  padding-top: 0.4rem;
+  border-top: 1px dashed rgba(0, 0, 0, 0.08);
+}
+
+.mobile-drawer__all-products-link {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  display: block;
 }
 
 /* Social icons row */
@@ -548,68 +905,59 @@ watch(cartCount, () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 
 .mobile-drawer__social:hover {
-  color: var(--color-accent);
   opacity: 1;
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
-/* Search Overlay Styles */
+/* Search Overlay */
 .search-overlay {
-  position: fixed;
-  top: 0;
+  position: absolute;
+  top: 100%;
   left: 0;
   width: 100%;
-  height: 100px;
   background-color: var(--color-bg-light);
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  z-index: 120;
-  display: flex;
-  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  padding: 1.5rem 0;
 }
 
 .search-overlay__container {
   display: flex;
   justify-content: center;
-  width: 100%;
 }
 
 .search-overlay__search-box {
-  display: flex;
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
+  position: relative;
+  display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--color-text-dark);
-  padding: 0.5rem 0;
 }
 
 .search-overlay__input {
-  flex: 1;
-  background: none;
+  width: 100%;
+  background: transparent;
   border: none;
+  border-bottom: 2px solid var(--color-text-dark);
+  padding: 0.75rem 2.5rem 0.75rem 0.5rem;
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   color: var(--color-text-dark);
-  outline: none;
 }
 
-.search-overlay__input::placeholder {
-  color: var(--color-text-muted);
-  font-style: italic;
+.search-overlay__input:focus {
+  outline: none;
+  border-bottom-color: var(--color-accent);
 }
 
 .search-overlay__close {
+  position: absolute;
+  right: 0.5rem;
   color: var(--color-text-dark);
-  margin-left: 1rem;
-  transition: transform 0.2s ease;
-}
-
-.search-overlay__close:hover {
-  transform: rotate(90deg);
 }
 
 /* Transitions */
@@ -630,44 +978,42 @@ watch(cartCount, () => {
 
 /* ─── Mobile layout (≤992px) ─────────────────────────────────────────── */
 @media (max-width: 992px) {
-  /* Hide desktop nav */
-  .header__nav {
-    display: none;
+  /* Hide desktop nav and mega-menu */
+  .header__nav,
+  .shop-mega-menu,
+  .shop-mega-menu__overlay {
+    display: none !important;
   }
 
-  /* Switch container to 3-column grid:
-     left: hamburger  |  centre: logo  |  right: action icons */
+  /* Switch container to 3-column grid */
   .header__container {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
   }
 
-  /* Show the hamburger in the left slot */
   .header__mobile-toggle {
     display: flex;
     justify-self: start;
   }
 
-  /* Logo sits in the auto (centre) column */
   .header__logo-link {
     justify-self: center;
   }
 
-  /* Action icons pushed to the far right */
   .header__actions {
     justify-self: end;
     gap: 1rem;
   }
 
   .header__logo {
-    height: 75px;
+    height: 55px;
   }
 }
 
 @media (max-width: 576px) {
   .header__logo {
-    height: 60px;
+    height: 48px;
   }
 }
 </style>

@@ -83,7 +83,7 @@ const currencySymbol = computed(() => {
   if (c === 'NGN') return '₦'
   if (c === 'EUR') return '€'
   if (c === 'GBP') return '£'
-  return '$'
+  return '₦'
 })
 
 const subtotal = computed(() => {

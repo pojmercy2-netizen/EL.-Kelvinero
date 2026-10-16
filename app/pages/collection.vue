@@ -5,31 +5,31 @@
     <!-- HERO HEADER                                 -->
     <!-- ═══════════════════════════════════════════ -->
     <header class="coll-hero">
-      <img src="/images/brand_bg.png" alt="EL. Kelvinero Collections" class="coll-hero__bg" />
+      <img src="/images/brand_bg.png" alt="TZORAH EMPORIUM Curated Collections" class="coll-hero__bg" />
       <div class="coll-hero__overlay"></div>
       <div class="coll-hero__content">
-        <span class="coll-hero__eyebrow">THE EDITS</span>
+        <span class="coll-hero__eyebrow">THE CURATED EDITS</span>
         <h1 class="coll-hero__title">Our Collections</h1>
-        <p class="coll-hero__sub">Thoughtfully curated lines representing the heights of timeless styling.</p>
+        <p class="coll-hero__sub">Explore our dedicated sanctuaries: perfumes, rare oils, artisan candle supplies &amp; discreet intimates.</p>
       </div>
       <div class="img-logo-overlay img-logo-overlay--br">
-        <img src="/logo.png" alt="EL. Kelvinero" />
+        <img src="/logo.png" alt="TZORAH EMPORIUM" />
       </div>
     </header>
 
     <!-- ═══════════════════════════════════════════ -->
-    <!-- GENDER SWITCHER (MEN / WOMEN / KIDS)        -->
+    <!-- PILLAR SWITCHER                             -->
     <!-- ═══════════════════════════════════════════ -->
     <section class="coll-gender-bar">
       <div class="container">
         <div class="gender-tabs">
           <button
-            v-for="gender in genders"
-            :key="gender"
-            :class="['gender-tab', { 'gender-tab--active': activeGender === gender }]"
-            @click="selectGender(gender)"
+            v-for="pillar in pillars"
+            :key="pillar"
+            :class="['gender-tab', { 'gender-tab--active': activePillar === pillar }]"
+            @click="selectPillar(pillar)"
           >
-            {{ gender }}
+            {{ pillar }}
           </button>
         </div>
       </div>
@@ -42,7 +42,7 @@
       <div class="container">
         <div class="category-filters">
           <button
-            v-for="cat in categories"
+            v-for="cat in currentSubcategories"
             :key="cat"
             :class="['cat-btn', { 'cat-btn--active': activeCategory === cat }]"
             @click="activeCategory = cat"
@@ -66,13 +66,11 @@
           <div class="product-card__image-container">
             <img :src="product.image" :alt="product.name" class="product-card__img" />
 
-            <!-- Brand Logo watermark -->
-            <div class="img-logo-overlay img-logo-overlay--br">
-              <img src="/logo.png" alt="EL. Kelvinero" />
-            </div>
-
             <!-- Category Tag -->
-            <span class="product-card__tag">{{ product.category }}</span>
+            <span class="product-card__tag">{{ product.subcategory || product.category }}</span>
+
+            <!-- Size Pill -->
+            <span class="product-card__size" v-if="product.size">{{ product.size }}</span>
 
             <!-- Heart Wishlist Toggle -->
             <button
@@ -100,16 +98,8 @@
           </div>
 
           <div class="product-card__details">
-            <div class="product-card__swatches">
-              <span
-                v-for="color in product.colors"
-                :key="color"
-                :class="['swatch', { 'swatch--active': activeSwatches[product.id] === color }]"
-                :style="{ backgroundColor: getColorHex(color) }"
-                @click="activeSwatches[product.id] = color"
-              ></span>
-            </div>
             <h3 class="product-card__title">{{ product.name }}</h3>
+            <p class="product-card__desc" v-if="product.description">{{ product.description }}</p>
             <p class="product-card__price">{{ product.priceFormatted }}</p>
           </div>
         </div>
@@ -117,7 +107,7 @@
 
       <!-- Empty State -->
       <div v-if="activeProducts.length === 0" class="coll-empty">
-        <p>No items found in this category.</p>
+        <p>No items found in this section.</p>
       </div>
     </main>
 
@@ -126,26 +116,46 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed } from 'vue'
 
 useHead({
-  title: 'Our Collections | EL. Kelvinero',
-  meta: [{ name: 'description', content: 'Explore Men, Women, and Kids collections from EL. Kelvinero.' }]
+  title: 'Our Collections | TZORAH EMPORIUM',
+  meta: [{ name: 'description', content: 'Explore curated collections of authentic perfumes, botanical oils, candlecraft, pet care, and private adult wellness from TZORAH EMPORIUM.' }]
 })
 
-const cartCount = useState('cartCount')
+const cartCount = useState('cartCount', () => 0)
 const cartItems = useState('cartItems', () => [])
 const toasts = useState('toasts', () => [])
 
-// ─── Gender & Category State ─────────────────────
-const genders = ['MEN', 'WOMEN', 'KIDS']
-const categories = ['ALL', 'T-SHIRTS', 'HOODIES', 'SWEATSHIRTS', 'POLOS', 'JACKETS', 'PANTS', 'ACCESSORIES']
+// ─── Pillars & Subcategories ─────────────────────
+const pillars = [
+  'PERFUMES & SCENTS',
+  'THE OILS BAR',
+  'CANDLECRAFT & CARE',
+  'PRIVATE BOUDOIR (18+)'
+]
 
-const activeGender = ref('MEN')
+const activePillar = ref('PERFUMES & SCENTS')
 const activeCategory = ref('ALL')
 
-const selectGender = (gender) => {
-  activeGender.value = gender
+const currentSubcategories = computed(() => {
+  if (activePillar.value === 'PERFUMES & SCENTS') {
+    return ['ALL', 'USA OIL PERFUMES', 'MIDDLE EASTERN', 'DESIGNER PERFUMES', 'NICHE PRODUCTS']
+  }
+  if (activePillar.value === 'THE OILS BAR') {
+    return ['ALL', 'FRAGRANCE OILS', 'ESSENTIAL OILS', 'NATURAL OILS']
+  }
+  if (activePillar.value === 'CANDLECRAFT & CARE') {
+    return ['ALL', 'CANDLE ACCESSORIES', 'UNSCENTED PRODUCTS', 'PET BODY CARE']
+  }
+  if (activePillar.value === 'PRIVATE BOUDOIR (18+)') {
+    return ['ALL', 'ADULT TOYS', 'LINGERIES']
+  }
+  return ['ALL']
+})
+
+const selectPillar = (p) => {
+  activePillar.value = p
   activeCategory.value = 'ALL'
 }
 
@@ -165,134 +175,309 @@ const showToast = (message) => {
   toasts.value.push({ id: Date.now(), message })
 }
 
-// ─── Color helper ─────────────────────────────────
-const getColorHex = (name) => {
-  const map = {
-    black: '#121212', white: '#f8f9fa', cream: '#ebe7e0',
-    tan: '#d2b48c', grey: '#8e8e93', navy: '#1a233d',
-    beige: '#e1d5c2', brown: '#5c4033', olive: '#556b2f',
-    camel: '#c19a6b', khaki: '#c8b87a', 'dusty-rose': '#cca4a4',
-    burgundy: '#7d1f2a', teal: '#3d7a7a', charcoal: '#3a3a3a'
+// ─── Complete Collection Catalog ─────────────────
+const collectionProducts = [
+  // ─── PERFUMES & SCENTS
+  {
+    id: 'perf_usa_1',
+    pillar: 'PERFUMES & SCENTS',
+    subcat: 'USA OIL PERFUMES',
+    name: 'Baccarat Rouge 540 Pure Oil (USA)',
+    price: 38500,
+    priceFormatted: '₦38,500.00',
+    image: '/images/products/perf_usa_1.png',
+    size: '50ml',
+    description: '100% pure undiluted perfume oil imported from USA fragrance houses.'
+  },
+  {
+    id: 'perf_usa_2',
+    pillar: 'PERFUMES & SCENTS',
+    subcat: 'USA OIL PERFUMES',
+    name: 'Aventus Imperial Undiluted Oil (USA)',
+    price: 32000,
+    priceFormatted: '₦32,000.00',
+    image: '/images/products/perf_usa_2.png',
+    size: '30ml',
+    description: 'Crisp bergamot, birch smoke, patchouli and oakmoss in concentrated oil.'
+  },
+  {
+    id: 'perf_me_1',
+    pillar: 'PERFUMES & SCENTS',
+    subcat: 'MIDDLE EASTERN',
+    name: 'Lattafa Khamrah Royale EDP',
+    price: 48000,
+    priceFormatted: '₦48,000.00',
+    image: '/images/products/perf_me_1.png',
+    size: '100ml',
+    description: 'Warm cinnamon, praline, dates and smoky vanilla tonka bean.'
+  },
+  {
+    id: 'perf_me_2',
+    pillar: 'PERFUMES & SCENTS',
+    subcat: 'MIDDLE EASTERN',
+    name: 'Swiss Arabian Shaghaf Oud Gold Extrait',
+    price: 55000,
+    priceFormatted: '₦55,000.00',
+    image: '/images/products/perf_me_2.png',
+    size: '75ml',
+    description: 'Decadent agarwood (oud), rich golden praline and warm vanilla.'
+  },
+  {
+    id: 'perf_des_1',
+    pillar: 'PERFUMES & SCENTS',
+    subcat: 'DESIGNER PERFUMES',
+    name: 'Bleu de Chanel Eau de Parfum (Original)',
+    price: 185000,
+    priceFormatted: '₦185,000.00',
+    image: '/images/products/perf_des_1.png',
+    size: '100ml',
+    description: 'Aromatic-woody elegance. Guaranteed authentic original.'
+  },
+  {
+    id: 'perf_des_2',
+    pillar: 'PERFUMES & SCENTS',
+    subcat: 'DESIGNER PERFUMES',
+    name: 'Tom Ford Tobacco Vanille (Authentic)',
+    price: 245000,
+    priceFormatted: '₦245,000.00',
+    image: '/images/products/perf_des_2.png',
+    size: '50ml',
+    description: 'Tobacco leaf, aromatic spices, cocoa, tonka bean and sweet sap.'
+  },
+  {
+    id: 'perf_niche_1',
+    pillar: 'PERFUMES & SCENTS',
+    subcat: 'NICHE PRODUCTS',
+    name: 'Maison Francis Kurkdjian Grand Soir',
+    price: 280000,
+    priceFormatted: '₦280,000.00',
+    image: '/images/products/perf_niche_1.png',
+    size: '70ml',
+    description: 'Deep labdanum cistus, Brazilian tonka bean and rich amber vanilla.'
+  },
+
+  // ─── THE OILS BAR
+  {
+    id: 'oil_frag_1',
+    pillar: 'THE OILS BAR',
+    subcat: 'FRAGRANCE OILS',
+    name: 'Golden Amber & Musk Fragrance Oil',
+    price: 18500,
+    priceFormatted: '₦18,500.00',
+    image: '/images/products/oil_frag_1.png',
+    size: '100ml',
+    description: 'Cosmetic & candle grade fragrance oil for diffusers and body application.'
+  },
+  {
+    id: 'oil_frag_2',
+    pillar: 'THE OILS BAR',
+    subcat: 'FRAGRANCE OILS',
+    name: 'French Vanilla Blossom Fragrance Oil',
+    price: 16000,
+    priceFormatted: '₦16,000.00',
+    image: '/images/products/oil_frag_2.png',
+    size: '100ml',
+    description: 'Sensuous warm vanilla bean for body oils and candle crafts.'
+  },
+  {
+    id: 'oil_ess_1',
+    pillar: 'THE OILS BAR',
+    subcat: 'ESSENTIAL OILS',
+    name: '100% Pure French Lavender Essential Oil',
+    price: 12500,
+    priceFormatted: '₦12,500.00',
+    image: '/images/products/oil_ess_1.png',
+    size: '30ml',
+    description: 'Steam-distilled pure botanical essence from Provence. Calming aromatherapy.'
+  },
+  {
+    id: 'oil_ess_2',
+    pillar: 'THE OILS BAR',
+    subcat: 'ESSENTIAL OILS',
+    name: 'Australian Organic Tea Tree Essential Oil',
+    price: 11000,
+    priceFormatted: '₦11,000.00',
+    image: '/images/products/oil_ess_2.png',
+    size: '30ml',
+    description: 'Therapeutic grade Melaleuca alternifolia. Clarifying and purifying.'
+  },
+  {
+    id: 'oil_nat_1',
+    pillar: 'THE OILS BAR',
+    subcat: 'NATURAL OILS',
+    name: 'Cold-Pressed Golden Jojoba Natural Oil',
+    price: 15000,
+    priceFormatted: '₦15,000.00',
+    image: '/images/products/oil_nat_1.png',
+    size: '200ml',
+    description: 'Virgin unrefined cold-pressed carrier oil. Deeply hydrating.'
+  },
+  {
+    id: 'oil_nat_2',
+    pillar: 'THE OILS BAR',
+    subcat: 'NATURAL OILS',
+    name: 'Organic Moroccan Argan Natural Oil',
+    price: 19500,
+    priceFormatted: '₦19,500.00',
+    image: '/images/products/oil_nat_2.png',
+    size: '100ml',
+    description: 'Rich in vitamin E and antioxidants. 100% cold-pressed purity.'
+  },
+
+  // ─── CANDLECRAFT & CARE
+  {
+    id: 'candle_1',
+    pillar: 'CANDLECRAFT & CARE',
+    subcat: 'CANDLE ACCESSORIES',
+    name: 'Golden Soy Wax Flakes (1kg Bag)',
+    price: 16500,
+    priceFormatted: '₦16,500.00',
+    image: '/images/products/candle_1.png',
+    size: '1kg',
+    description: '100% natural, biodegradable soy wax for container candles.'
+  },
+  {
+    id: 'candle_2',
+    pillar: 'CANDLECRAFT & CARE',
+    subcat: 'CANDLE ACCESSORIES',
+    name: 'Pre-Waxed Cotton Wicks & Sustainer Kit',
+    price: 7500,
+    priceFormatted: '₦7,500.00',
+    image: '/images/products/candle_2.png',
+    size: '100 Pcs',
+    description: '100 natural lead-free cotton wicks with metal base sustainers.'
+  },
+  {
+    id: 'unscented_1',
+    pillar: 'CANDLECRAFT & CARE',
+    subcat: 'UNSCENTED PRODUCTS',
+    name: 'Raw Whipped Unscented Shea & Mango Butter',
+    price: 14500,
+    priceFormatted: '₦14,500.00',
+    image: '/images/products/unscented_1.png',
+    size: '250g',
+    description: 'Silky whipped body butter crafted without fragrance. 100% hypoallergenic.'
+  },
+  {
+    id: 'pet_1',
+    pillar: 'CANDLECRAFT & CARE',
+    subcat: 'PET BODY CARE',
+    name: 'Calming Oatmeal & Chamomile Pet Coat Wash',
+    price: 13500,
+    priceFormatted: '₦13,500.00',
+    image: '/images/products/pet_1.png',
+    size: '350ml',
+    description: 'pH balanced soothing shampoo for dogs and cats.'
+  },
+  {
+    id: 'pet_2',
+    pillar: 'CANDLECRAFT & CARE',
+    subcat: 'PET BODY CARE',
+    name: 'Organic Herbal Paw & Nose Protection Balm',
+    price: 8500,
+    priceFormatted: '₦8,500.00',
+    image: '/images/products/pet_2.png',
+    size: '60g',
+    description: 'Lick-safe formula to soothe dry cracked paws and snouts.'
+  },
+
+  // ─── PRIVATE BOUDOIR (18+)
+  {
+    id: 'adult_toy_1',
+    pillar: 'PRIVATE BOUDOIR (18+)',
+    subcat: 'ADULT TOYS',
+    name: 'Whisper Luxe Ergonomic Silicone Pulse Wand',
+    price: 38000,
+    priceFormatted: '₦38,000.00',
+    image: '/images/products/adult_toy_1.png',
+    size: 'Standard',
+    description: 'Medical-grade velvety soft silicone intimate wellness massager.'
+  },
+  {
+    id: 'adult_toy_2',
+    pillar: 'PRIVATE BOUDOIR (18+)',
+    subcat: 'ADULT TOYS',
+    name: 'Rose Petal Dual-Action Precision Stimulator',
+    price: 42000,
+    priceFormatted: '₦42,000.00',
+    image: '/images/products/adult_toy_2.png',
+    size: 'Compact',
+    description: 'Gentle air-pulse and magnetic vibration technology in rose design.'
+  },
+  {
+    id: 'adult_ling_1',
+    pillar: 'PRIVATE BOUDOIR (18+)',
+    subcat: 'LINGERIES',
+    name: 'Midnight Mulberry Silk & Lace Chemise',
+    price: 32000,
+    priceFormatted: '₦32,000.00',
+    image: '/images/products/adult_ling_1.png',
+    size: 'S / M / L / XL',
+    description: '100% pure Mulberry silk slip adorned with French Chantilly lace.'
+  },
+  {
+    id: 'adult_ling_2',
+    pillar: 'PRIVATE BOUDOIR (18+)',
+    subcat: 'LINGERIES',
+    name: 'Ethereal Satin Robe with Chantilly Lace Trim',
+    price: 36000,
+    priceFormatted: '₦36,000.00',
+    image: '/images/products/adult_ling_2.png',
+    size: 'Free Size',
+    description: 'Fluid satin dressing gown with eyelash lace cuffs and sash tie belt.'
   }
-  return map[name.toLowerCase()] || '#cccccc'
+]
+
+// ─── Live Products Sync ───────────────────────────
+const { data: liveData } = await useAsyncData('collectionLiveProducts', () => $fetch('/api/v1/products'))
+
+const mapPillar = (cat) => {
+  const c = String(cat || '').toUpperCase()
+  if (c === 'PERFUMES' || c === 'OILS') return 'PERFUMES & SCENTS'
+  if (c === 'ADULT SECTION') return 'ADULT & PRIVATE'
+  return 'LIFESTYLE & LIVING'
 }
 
-// ─── Product Catalog (MEN + WOMEN + KIDS) ─────────
-const products = ref([
-  // ══════════════ MEN ══════════════
-  { id: 'm-ts1', gender: 'MEN', category: 'T-SHIRTS', name: 'SIGNATURE TEE', price: 59, priceFormatted: '$59.00', image: '/images/product_tee.png', colors: ['black', 'cream', 'grey'] },
-  { id: 'm-h1', gender: 'MEN', category: 'HOODIES', name: 'CLASSIC HOODIE', price: 89, priceFormatted: '$89.00', image: '/images/product_hoodie.png', colors: ['cream', 'black', 'brown'] },
-  { id: 'm-sw1', gender: 'MEN', category: 'SWEATSHIRTS', name: 'MINIMAL CREWNECK SWEATSHIRT', price: 75, priceFormatted: '$75.00', image: '/images/product_sweatshirt.png', colors: ['grey', 'cream', 'navy'] },
-  { id: 'm-p1', gender: 'MEN', category: 'POLOS', name: 'KNIT POLO', price: 89, priceFormatted: '$89.00', image: '/images/product_polo.png', colors: ['beige', 'navy', 'black'] },
-  { id: 'm-pn1', gender: 'MEN', category: 'PANTS', name: 'CLASSIC CARGO PANTS', price: 99, priceFormatted: '$99.00', image: '/images/about_hero_model.png', colors: ['olive', 'black'] },
-  { id: 'm-ac1', gender: 'MEN', category: 'ACCESSORIES', name: 'WOOL KNIT BEANIE', price: 35, priceFormatted: '$35.00', image: '/images/about_label_collar.png', colors: ['black', 'cream', 'grey'] },
-  // ══════════════ WOMEN ══════════════
-  { id: 'w-ts1', gender: 'WOMEN', category: 'T-SHIRTS', name: 'FITTED SIGNATURE TEE', price: 55, priceFormatted: '$55.00', image: '/images/product_tee.png', colors: ['white', 'black', 'dusty-rose'] },
-  { id: 'w-h1', gender: 'WOMEN', category: 'HOODIES', name: 'RELAXED FIT HOODIE', price: 89, priceFormatted: '$89.00', image: '/images/product_hoodie.png', colors: ['cream', 'dusty-rose', 'grey'] },
-  { id: 'w-sw1', gender: 'WOMEN', category: 'SWEATSHIRTS', name: 'OVERSIZED CREWNECK', price: 75, priceFormatted: '$75.00', image: '/images/product_sweatshirt.png', colors: ['grey', 'cream', 'burgundy'] },
-  { id: 'w-p1', gender: 'WOMEN', category: 'POLOS', name: 'KNIT POLO SHIRT', price: 85, priceFormatted: '$85.00', image: '/images/product_polo.png', colors: ['beige', 'teal', 'black'] },
-  { id: 'w-pn1', gender: 'WOMEN', category: 'PANTS', name: 'TAILORED WIDE-LEG TROUSERS', price: 99, priceFormatted: '$99.00', image: '/images/lookbook_lifestyle.png', colors: ['grey', 'black', 'tan'] },
-  { id: 'w-ac1', gender: 'WOMEN', category: 'ACCESSORIES', name: 'MINIMAL HOBO BAG', price: 189, priceFormatted: '$189.00', image: '/images/brand_bg.png', colors: ['black', 'camel'] },
-  // ══════════════ KIDS ══════════════
-  { id: 'k-ts1', gender: 'KIDS', category: 'T-SHIRTS', name: 'MINI SIGNATURE TEE', price: 35, priceFormatted: '$35.00', image: '/images/product_tee.png', colors: ['black', 'white', 'grey'] },
-  { id: 'k-h1', gender: 'KIDS', category: 'HOODIES', name: 'MINI SIGNATURE HOODIE', price: 59, priceFormatted: '$59.00', image: '/images/product_hoodie.png', colors: ['cream', 'black', 'grey'] },
-  { id: 'k-sw1', gender: 'KIDS', category: 'SWEATSHIRTS', name: 'KIDS CREWNECK SWEATER', price: 49, priceFormatted: '$49.00', image: '/images/product_sweatshirt.png', colors: ['grey', 'beige', 'navy'] },
-  { id: 'k-p1', gender: 'KIDS', category: 'POLOS', name: 'KIDS PIQUE POLO', price: 45, priceFormatted: '$45.00', image: '/images/product_polo.png', colors: ['white', 'navy', 'cream'] },
-  { id: 'k-pn1', gender: 'KIDS', category: 'PANTS', name: 'KIDS ESSENTIAL JOGGERS', price: 49, priceFormatted: '$49.00', image: '/images/lookbook_lifestyle.png', colors: ['grey', 'black', 'beige'] },
-  { id: 'k-ac1', gender: 'KIDS', category: 'ACCESSORIES', name: 'KIDS KNIT BEANIE', price: 25, priceFormatted: '$25.00', image: '/images/about_label_collar.png', colors: ['black', 'beige', 'grey'] }
-])
-
-const { storeSettings, fetchStoreSettings } = useStoreSettings()
-
-const currencySymbol = computed(() => {
-  const c = storeSettings.value?.currency || 'NGN'
-  if (c === 'NGN') return '₦'
-  if (c === 'EUR') return '€'
-  if (c === 'GBP') return '£'
-  return '$'
-})
-
-const mapCollectionProducts = (dataList) => {
-  if (!Array.isArray(dataList) || dataList.length === 0) return null
-  return dataList.map(p => {
-    let colors = ['black']
-    if (Array.isArray(p.color)) colors = p.color
-    else if (typeof p.color === 'string' && p.color.startsWith('[')) {
-      try { colors = JSON.parse(p.color) } catch {}
-    }
-
-    let gender = 'MEN'
-    const collSlug = (p.collection?.slug || p.coll_slug || '').toLowerCase()
-    const collName = (p.collection?.name || p.coll_name || '').toLowerCase()
-    if (collSlug.includes('women') || collName.includes('women')) gender = 'WOMEN'
-    else if (collSlug.includes('kid') || collName.includes('kid')) gender = 'KIDS'
-
-    const priceVal = parseFloat(p.price)
-    return {
+const allProducts = computed(() => {
+  if (liveData.value && Array.isArray(liveData.value) && liveData.value.length > 0) {
+    return liveData.value.map(p => ({
       id: p.id,
-      gender,
-      category: (p.category?.name || p.cat_name || 'T-SHIRTS').toUpperCase(),
+      pillar: mapPillar(p.category || p.cat_name),
+      subcat: (p.subcategory || p.category || '').toUpperCase(),
       name: p.name,
-      price: priceVal,
-      priceFormatted: `${currencySymbol.value}${priceVal.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
-      image: p.image || '/images/product_tee.png',
-      colors
-    }
-  })
-}
-
-// Fetch live products during SSR and client render
-const { data: liveCollData } = await useAsyncData('collectionPageProducts', () => $fetch('/api/v1/products'))
-
-if (liveCollData.value) {
-  const mapped = mapCollectionProducts(liveCollData.value)
-  if (mapped) products.value = mapped
-}
-
-const fetchLiveCollProducts = async () => {
-  try {
-    await fetchStoreSettings()
-    const data = await $fetch('/api/v1/products')
-    const mapped = mapCollectionProducts(data)
-    if (mapped) products.value = mapped
-  } catch (err) {
-    console.error('Failed to load collection products from API:', err)
+      price: parseFloat(p.price || 0),
+      priceFormatted: `₦${parseFloat(p.price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+      image: p.image || '/images/products/perf_usa_1.png',
+      size: p.size || 'Standard',
+      description: p.description || ''
+    }))
   }
-}
+  return collectionProducts
+})
 
-onMounted(fetchLiveCollProducts)
-
-// ─── Active Swatches per product ─────────────────
-const activeSwatches = ref({})
-watch(products, (newProds) => {
-  newProds.forEach(p => {
-    if (!activeSwatches.value[p.id]) {
-      activeSwatches.value[p.id] = p.colors?.[0] || 'black'
-    }
-  })
-}, { immediate: true })
-
-// ─── Filtered Products ────────────────────────────
+// Filter products based on active pillar and category
 const activeProducts = computed(() => {
-  return products.value.filter(p => {
-    const genderMatch = !p.gender || p.gender === activeGender.value
-    const categoryMatch = activeCategory.value === 'ALL' || p.category === activeCategory.value
-    return genderMatch && categoryMatch
+  return allProducts.value.filter(p => {
+    const matchPillar = p.pillar === activePillar.value
+    if (!matchPillar) return false
+    if (activeCategory.value === 'ALL') return true
+    return p.subcat?.toUpperCase() === activeCategory.value.toUpperCase()
   })
 })
 
-
-// ─── Add to Cart ─────────────────────────────────
 const addToCart = (product) => {
   cartCount.value++
-  const selectedColor = activeSwatches.value[product.id] || product.colors[0]
-  const existing = cartItems.value.find(i => i.id === product.id && i.selectedColor === selectedColor)
-  if (existing) {
-    existing.quantity++
+  const existingItem = cartItems.value.find(item => item.id === product.id)
+  if (existingItem) {
+    existingItem.quantity++
   } else {
-    cartItems.value.push({ ...product, quantity: 1, selectedColor })
+    cartItems.value.push({
+      ...product,
+      quantity: 1
+    })
   }
-  showToast(`"${product.name}" added to bag.`)
+
+  showToast(`Added "${product.name}" to your bag.`)
 }
 </script>
 
@@ -302,424 +487,352 @@ const addToCart = (product) => {
   min-height: 100vh;
 }
 
-/* ─── Hero ─────────────────────────────────────── */
+/* ─── Hero Header ─────────────────────────────── */
 .coll-hero {
   position: relative;
-  height: 300px;
-  overflow: hidden;
+  width: 100%;
+  height: 44vh;
+  min-height: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: #fff;
+  overflow: hidden;
+  background-color: var(--color-bg-dark);
 }
+
 .coll-hero__bg {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 30%;
+  opacity: 0.6;
 }
+
 .coll-hero__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.48);
+  background: linear-gradient(to bottom, rgba(17, 17, 17, 0.4) 0%, rgba(17, 17, 17, 0.85) 100%);
 }
+
 .coll-hero__content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  color: var(--color-text-light);
+  max-width: 650px;
   padding: 0 1.5rem;
 }
+
 .coll-hero__eyebrow {
   font-family: var(--font-sans);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  opacity: 0.8;
-  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.25em;
+  color: var(--color-accent);
+  margin-bottom: 0.75rem;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.coll-hero__title {
+  font-size: 3.25rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   margin-bottom: 0.75rem;
 }
-.coll-hero__title {
-  font-family: var(--font-serif);
-  font-size: clamp(2.2rem, 5vw, 3.5rem);
-  font-weight: 400;
-  margin-bottom: 0.5rem;
-}
+
 .coll-hero__sub {
-  font-family: var(--font-sans);
-  font-size: 0.88rem;
-  opacity: 0.85;
-  max-width: 480px;
-  margin: 0 auto;
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
 }
 
-/* Watermark */
-.img-logo-overlay {
-  position: absolute;
-  width: 68px;
-  opacity: 0.45;
-  pointer-events: none;
-  z-index: 3;
-}
-.img-logo-overlay img {
-  width: 100%;
-  height: auto;
-  filter: brightness(0) invert(1);
-}
-.img-logo-overlay--br { bottom: 1rem; right: 1rem; }
-
-/* ─── Gender Bar ───────────────────────────────── */
+/* ─── Pillar Bar ──────────────────────────────── */
 .coll-gender-bar {
-  background: #fff;
-  border-bottom: 1px solid rgba(0,0,0,0.07);
+  background-color: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
+
 .gender-tabs {
   display: flex;
   justify-content: center;
-  gap: 2.5rem;
-}
-.gender-tab {
-  font-family: var(--font-sans);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  padding: 1.4rem 0.25rem;
-  background: none;
-  border: none;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  position: relative;
-  transition: color 0.25s ease;
-}
-.gender-tab:hover { color: var(--color-text-dark); }
-.gender-tab--active { color: var(--color-text-dark); }
-.gender-tab--active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--color-accent);
-}
-
-/* ─── Category Filter Bar ──────────────────────── */
-.coll-category-bar {
-  background: #faf9f7;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  position: sticky;
-  top: calc(var(--header-height) + 36px);
-  z-index: 20;
-}
-.coll-category-bar .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-.category-filters {
-  display: flex;
   gap: 0;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
 }
-.category-filters::-webkit-scrollbar { display: none; }
+
+.gender-tab {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  padding: 1.25rem 2rem;
+  color: var(--color-text-muted);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.gender-tab:hover {
+  color: var(--color-text-dark);
+}
+
+.gender-tab--active {
+  color: var(--color-text-dark);
+  border-bottom-color: var(--color-accent);
+}
+
+/* ─── Category Bar ────────────────────────────── */
+.coll-category-bar {
+  background-color: var(--color-bg-light);
+  padding: 1.25rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.coll-category-bar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .cat-btn {
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 1.1rem 1.25rem;
-  background: none;
-  border: none;
+  letter-spacing: 0.1em;
+  padding: 0.45rem 1rem;
+  background-color: transparent;
   color: var(--color-text-muted);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  position: relative;
-  white-space: nowrap;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
 }
-.cat-btn:hover { color: var(--color-text-dark); }
-.cat-btn--active {
+
+.cat-btn:hover {
   color: var(--color-text-dark);
-  font-weight: 700;
+  border-color: rgba(0, 0, 0, 0.25);
 }
-.cat-btn--active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--color-accent);
+
+.cat-btn--active {
+  background-color: var(--color-text-dark);
+  color: #ffffff;
+  border-color: var(--color-text-dark);
 }
+
 .coll-count {
   font-family: var(--font-sans);
   font-size: 0.72rem;
+  font-weight: 600;
   letter-spacing: 0.1em;
   color: var(--color-text-muted);
-  white-space: nowrap;
-  padding: 0 0 0 1rem;
 }
 
-/* ─── Product Grid ─────────────────────────────── */
+/* ─── Main Grid ───────────────────────────────── */
 .coll-main {
-  padding: 3rem var(--spacing-md) 6rem;
+  padding-top: 3rem;
+  padding-bottom: 6rem;
 }
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 3rem 1.75rem;
-}
-
-/* Transition group animations */
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
+  gap: 2.5rem 1.75rem;
 }
 
 .product-card {
   display: flex;
   flex-direction: column;
+  transition: var(--transition-smooth);
 }
+
 .product-card__image-container {
   position: relative;
   width: 100%;
   aspect-ratio: 3/4;
   overflow: hidden;
-  background: #ebe7e0;
+  background-color: #1a1917;
 }
+
 .product-card__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
-.product-card:hover .product-card__img { transform: scale(1.05); }
 
-/* Category Tag */
-.product-card__tag {
-  position: absolute;
-  top: 0.85rem;
-  left: 0.85rem;
-  font-family: var(--font-sans);
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  background: rgba(255,255,255,0.92);
-  color: var(--color-text-dark);
-  padding: 0.25rem 0.6rem;
-  z-index: 2;
-  text-transform: uppercase;
+.product-card:hover .product-card__img {
+  transform: scale(1.05);
 }
 
-/* Wishlist Heart */
+.product-card__tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(4px);
+  color: var(--color-accent);
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.6rem;
+  border-radius: 2px;
+  text-transform: uppercase;
+  z-index: 2;
+  border: 1px solid rgba(218, 178, 126, 0.3);
+}
+
+.product-card__size {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-dark);
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  z-index: 2;
+}
+
 .product-card__wishlist {
   position: absolute;
-  top: 0.85rem;
-  right: 0.85rem;
-  background: #fff;
-  color: var(--color-text-dark);
-  border: none;
-  border-radius: 50%;
+  top: 12px;
+  right: 12px;
   width: 32px;
   height: 32px;
+  background-color: rgba(255, 255, 255, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border-radius: 50%;
+  color: var(--color-text-dark);
   z-index: 3;
   transition: all 0.25s ease;
 }
-.product-card__wishlist:hover { transform: scale(1.1); }
-.product-card__wishlist--active { background: #e25c5c !important; color: #fff !important; }
 
-/* Hover Overlay & Quick Add */
+.product-card__wishlist:hover {
+  background-color: #ffffff;
+  color: #e63946;
+  transform: scale(1.1);
+}
+
+.product-card__wishlist--active {
+  background-color: #ffffff;
+  color: #e63946;
+}
+
+.product-card__wishlist--active svg {
+  fill: #e63946;
+}
+
 .product-card__overlay {
   position: absolute;
   inset: 0;
+  background-color: rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 1.25rem;
+  padding-bottom: 1.5rem;
   opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 2;
+  transition: var(--transition-smooth);
 }
-.product-card:hover .product-card__overlay { opacity: 1; }
+
+.product-card:hover .product-card__overlay {
+  opacity: 1;
+}
+
 .product-card__quick-add {
-  background: var(--color-text-dark);
-  color: #fff;
+  background-color: var(--color-text-dark);
+  color: #ffffff;
   font-family: var(--font-sans);
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 600;
   letter-spacing: 0.1em;
-  padding: 0.7rem 1.25rem;
+  padding: 0.7rem 1.4rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   border: 1px solid var(--color-text-dark);
   cursor: pointer;
   transform: translateY(10px);
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  transition: var(--transition-smooth);
 }
-.product-card__quick-add:hover { background: #fff; color: var(--color-text-dark); }
-.product-card:hover .product-card__quick-add { transform: translateY(0); }
 
-/* Card details */
-.product-card__details { padding-top: 1.1rem; text-align: center; }
-.product-card__swatches { display: flex; justify-content: center; gap: 0.4rem; margin-bottom: 0.6rem; }
-.swatch {
-  width: 13px; height: 13px; border-radius: 50%;
-  border: 1px solid rgba(0,0,0,0.12);
-  cursor: pointer; position: relative;
-  transition: all 0.2s ease;
+.product-card:hover .product-card__quick-add {
+  transform: translateY(0);
 }
-.swatch--active::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border: 1.5px solid var(--color-text-dark);
-  border-radius: 50%;
+
+.product-card__quick-add:hover {
+  background-color: #ffffff;
+  color: var(--color-text-dark);
 }
+
+.product-card__details {
+  padding-top: 1rem;
+}
+
 .product-card__title {
   font-family: var(--font-serif);
-  font-size: 1.05rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 1.15rem;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.35rem;
   color: var(--color-text-dark);
-  margin-bottom: 0.3rem;
-}
-.product-card__price {
-  font-family: var(--font-sans);
-  font-size: 0.88rem;
-  color: var(--color-accent);
-  font-weight: 500;
 }
 
-/* Empty State */
+.product-card__desc {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  margin-bottom: 0.4rem;
+}
+
+.product-card__price {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
 .coll-empty {
   text-align: center;
   padding: 5rem 0;
-  font-family: var(--font-sans);
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
   color: var(--color-text-muted);
-  font-size: 0.92rem;
-  letter-spacing: 0.05em;
 }
 
-/* ─── Responsive ───────────────────────────────── */
-
-/* Tablet */
-@media (max-width: 1100px) {
+@media (max-width: 1024px) {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 2.5rem 1.25rem;
   }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
-  .coll-main {
-    padding: 2rem 0 4rem;
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 1rem;
   }
-
-  .gender-tabs {
-    gap: 0;
+  .coll-hero__title {
+    font-size: 2.4rem;
   }
-
   .gender-tab {
+    padding: 1rem 1.2rem;
     font-size: 0.72rem;
-    padding: 1rem 0.5rem;
-    flex: 1;
-    text-align: center;
-  }
-
-  .coll-category-bar {
-    padding: 0.75rem 0;
-  }
-
-  .category-filters {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 4px;
-    gap: 0;
-  }
-  .category-filters::-webkit-scrollbar { display: none; }
-
-  .cat-btn {
-    white-space: nowrap;
-    flex-shrink: 0;
-    padding: 0.85rem 1rem;
-    font-size: 0.64rem;
-  }
-
-  .coll-count {
-    display: none;
-  }
-
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.75rem 0.85rem;
-  }
-
-  .product-card__overlay {
-    opacity: 1;
-  }
-
-  .product-card__quick-add {
-    transform: translateY(0);
-    font-size: 0.6rem;
-    padding: 0.6rem 0.85rem;
-    letter-spacing: 0.06em;
-  }
-
-  .product-card__title {
-    font-size: 0.88rem;
-  }
-
-  .product-card__price {
-    font-size: 0.78rem;
-  }
-}
-
-/* Small Mobile */
-@media (max-width: 480px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem 0.65rem;
-  }
-
-  .product-card__title {
-    font-size: 0.78rem;
-    letter-spacing: 0.02em;
-  }
-
-  .product-card__price {
-    font-size: 0.7rem;
-  }
-
-  .product-card__quick-add {
-    font-size: 0.55rem;
-    padding: 0.5rem 0.6rem;
-  }
-
-  .product-card__details {
-    padding-top: 0.75rem;
-  }
-
-  .img-logo-overlay {
-    width: 36px;
   }
 }
 </style>

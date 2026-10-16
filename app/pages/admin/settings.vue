@@ -78,13 +78,19 @@
         <div class="card-form">
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">FREE SHIPPING THRESHOLD ($)</label>
+              <label class="form-label">FREE SHIPPING THRESHOLD (₦)</label>
               <input v-model.number="settings.freeShippingThreshold" type="number" min="0" class="form-input" required />
             </div>
             <div class="form-group">
-              <label class="form-label">STANDARD SHIPPING FEE ($)</label>
+              <label class="form-label">STANDARD SHIPPING FEE (₦)</label>
               <input v-model.number="settings.standardShippingFee" type="number" min="0" class="form-input" required />
             </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">EXPRESS SHIPPING FEE (₦)</label>
+            <input v-model.number="settings.expressShippingFee" type="number" min="0" class="form-input" required />
+            <p class="form-hint">Charged when a customer selects Express Shipping (2–3 Business Days) at checkout.</p>
           </div>
 
           <div class="form-group">
@@ -198,7 +204,7 @@
                     v-model="acc.accountName"
                     type="text"
                     class="form-input"
-                    placeholder="e.g. EL. KELVINERO NIGERIA LTD"
+                    placeholder="e.g. TZORAH EMPORIUM ENTERPRISES"
                     required
                   />
                 </div>
@@ -263,41 +269,42 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Configuration Settings | EL. Kelvinero Admin',
-  meta: [{ name: 'description', content: 'EL. Kelvinero store configuration and portal administration settings.' }]
+  title: 'Configuration Settings | TZORAH EMPORIUM Admin',
+  meta: [{ name: 'description', content: 'TZORAH EMPORIUM configuration and portal administration settings.' }]
 })
 
 const adminToken = useCookie('adminToken')
 const toasts = useState('toasts', () => [])
 
 const settings = ref({
-  storeName: 'EL. KELVINERO',
-  tagline: 'Timeless Style. Made to Stand Out.',
-  supportEmail: 'concierge@elkelvinero.com',
-  telephone: '+234 (0) 800 KELVINERO',
-  whatsappNumber: '',
+  storeName: 'TZORAH EMPORIUM',
+  tagline: 'Luxury Perfumes, Botanical Oils & Lifestyle Emporium',
+  supportEmail: 'concierge@tzorahemporium.com',
+  telephone: '+234 (0) 800 TZORAH',
+  whatsappNumber: '+2348000000000',
   businessHours: 'Mon – Fri, 9am – 6pm',
-  contactAddress: 'Lagos, Nigeria',
+  contactAddress: 'Victoria Island, Lagos, Nigeria',
   responseTime: 'Response within 24 hours',
   freeShippingThreshold: 50000,
   standardShippingFee: 3500,
+  expressShippingFee: 7500,
   currency: 'NGN',
   autoApproveOrders: false,
   announcementEnabled: true,
-  announcementText: 'FREE SHIPPING ON ORDERS OVER ₦50,000',
-  announcementBg: '#1a1a1a',
+  announcementText: 'FREE LUXURY SHIPPING ON ALL ORDERS OVER ₦50,000',
+  announcementBg: '#111111',
   bankAccounts: [
     {
       id: '1',
       bankName: 'Guaranty Trust Bank (GTBank)',
       accountNumber: '0123456789',
-      accountName: 'EL. KELVINERO NIGERIA LTD',
+      accountName: 'TZORAH EMPORIUM ENTERPRISES',
       instructions: 'Please use your Order ID as the transfer description/reference.'
     }
   ]
 })
 
-const passcodeForm = ref('elkelvinero2025')
+const passcodeForm = ref('tzorah2026')
 const showPasscode = ref(false)
 const saving = ref(false)
 

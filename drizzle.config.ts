@@ -5,6 +5,6 @@ export default defineConfig({
   out: './server/db/migrations',
   dialect: 'mysql',
   dbCredentials: {
-    url: process.env.DATABASE_URL || 'mysql://root:@localhost:3306/elkelvinero',
+    url: process.env.DATABASE_URL || 'mysql://root:@localhost:3306/orstore',
   },
 })

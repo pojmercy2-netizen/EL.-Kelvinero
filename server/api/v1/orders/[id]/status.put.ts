@@ -5,70 +5,41 @@ import { requireAdmin } from '../../../../utils/auth'
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
 
-  const idStr = getRouterParam(event, 'id')
-  const id = idStr ? parseInt(idStr, 10) : NaN
-
-  if (isNaN(id)) {
-    throw createError({ statusCode: 400, statusMessage: 'Bad Request', message: 'Invalid order ID' })
+  const rawId = parseInt(event.context.params?.id as string, 10)
+  if (isNaN(rawId)) {
+    throw createError({ statusCode: 400, message: 'Invalid order ID' })
   }
 
   const body = await readBody(event)
   const { status, payment_status } = body || {}
 
-  const allowedStatuses = new Set(['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'])
-  const allowedPaymentStatuses = new Set(['Unpaid', 'Paid', 'Failed', 'Pending Verification'])
+  const updates: string[] = []
+  const values: any[] = []
 
-  const checkRes = await query('SELECT id, status, payment_status FROM orders WHERE id = ?', [id])
-  if (checkRes.rows.length === 0) {
-    throw createError({ statusCode: 404, statusMessage: 'Not Found', message: 'Order not found' })
+  if (status) {
+    updates.push('status = ?')
+    values.push(status)
   }
 
-  const currentOrder = checkRes.rows[0] as any
-  let newStatus = currentOrder.status
-  let newPaymentStatus = currentOrder.payment_status
-
-  if (status && allowedStatuses.has(status)) {
-    newStatus = status
-    if (status === 'Processing' && newPaymentStatus !== 'Paid') {
-      newPaymentStatus = 'Paid'
-    }
+  if (payment_status) {
+    updates.push('payment_status = ?')
+    values.push(payment_status)
   }
 
-  if (payment_status && allowedPaymentStatuses.has(payment_status)) {
-    newPaymentStatus = payment_status
-    if (payment_status === 'Paid' && newStatus === 'Pending') {
-      newStatus = 'Processing'
-    }
+  if (updates.length === 0) {
+    throw createError({ statusCode: 400, message: 'No status or payment_status provided' })
   }
 
-  await query('UPDATE orders SET status = ?, payment_status = ? WHERE id = ?', [newStatus, newPaymentStatus, id])
+  values.push(rawId)
+  const sql = `UPDATE orders SET ${updates.join(', ')} WHERE id = ? RETURNING *`
+  const res = await query(sql, values)
 
-  const updatedOrderRes = await query('SELECT * FROM orders WHERE id = ?', [id])
-  const updatedOrder = updatedOrderRes.rows[0] as any
-
-  const itemsRes = await query(`
-    SELECT oi.*, p.name, p.slug, p.image, p.price
-    FROM order_items oi
-    JOIN products p ON oi.product_id = p.id
-    WHERE oi.order_id = ?
-  `, [id])
+  if (res.rows.length === 0) {
+    throw createError({ statusCode: 404, message: 'Order not found' })
+  }
 
   return {
-    ...updatedOrder,
-    total_price: parseFloat(updatedOrder.total_price),
-    items: (itemsRes.rows as any[]).map(item => ({
-      id: item.id,
-      order_id: item.order_id,
-      product_id: item.product_id,
-      quantity: item.quantity,
-      unit_price: parseFloat(item.unit_price),
-      product: {
-        id: item.product_id,
-        name: item.name,
-        slug: item.slug,
-        image: item.image,
-        price: parseFloat(item.price)
-      }
-    }))
+    success: true,
+    order: res.rows[0]
   }
 })

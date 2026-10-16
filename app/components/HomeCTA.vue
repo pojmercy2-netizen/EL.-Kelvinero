@@ -1,20 +1,20 @@
 <template>
   <section class="home-cta">
     <div class="home-cta__bg">
-      <img src="/images/lookbook_lifestyle.png" alt="EL. Kelvinero Collection" class="home-cta__bg-img" />
+      <img src="/images/or_adult.png" alt="TZORAH EMPORIUM Private Collection" class="home-cta__bg-img" />
       <div class="home-cta__overlay"></div>
     </div>
     <div class="container home-cta__container">
       <div class="home-cta__content">
-        <span class="home-cta__label">LIMITED COLLECTION</span>
-        <h2 class="home-cta__title">DRESS WITH<br />INTENTION.</h2>
+        <span class="home-cta__label">EXCLUSIVE APOTHECARY & BOUDOIR</span>
+        <h2 class="home-cta__title">ELEVATE YOUR<br />SENSES.</h2>
         <div class="home-cta__divider"></div>
         <p class="home-cta__desc">
-          Discover pieces built for those who move with purpose. Elevated basics, premium craftsmanship — every garment designed to last.
+          From concentrated USA perfume oils and Middle Eastern attars to organic candlecraft and discreet luxury intimates — experience formulations built for sensory ecstasy.
         </p>
         <div class="home-cta__actions">
-          <NuxtLink to="/shop" class="btn btn-primary home-cta__btn">SHOP NOW</NuxtLink>
-          <NuxtLink to="/collection" class="btn btn-secondary home-cta__btn">VIEW COLLECTION</NuxtLink>
+          <NuxtLink to="/shop" class="btn btn-primary home-cta__btn">SHOP ALL PRODUCTS</NuxtLink>
+          <NuxtLink to="/shop?cat=ADULT%20SECTION" class="btn btn-secondary home-cta__btn">ADULT BOUDOIR (18+)</NuxtLink>
         </div>
         <!-- Trust badges -->
         <div class="home-cta__trust">
@@ -23,7 +23,7 @@
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               <path d="M9 11l2 2 4-4"/>
             </svg>
-            Premium Quality
+            100% Authentic Originals
           </span>
           <span class="home-cta__trust-sep">·</span>
           <span class="home-cta__trust-item">
@@ -35,10 +35,10 @@
           <span class="home-cta__trust-sep">·</span>
           <span class="home-cta__trust-item">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/>
-              <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
-            30-Day Returns
+            Discreet Confidential Packaging
           </span>
         </div>
       </div>

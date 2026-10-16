@@ -2,27 +2,28 @@ import { ref } from 'vue'
 
 export const useStoreSettings = () => {
   const storeSettings = useState('storeSettings', () => ({
-    storeName: 'EL. KELVINERO',
-    tagline: 'Timeless Style. Made to Stand Out.',
-    supportEmail: 'concierge@elkelvinero.com',
-    telephone: '+234 (0) 800 KELVINERO',
+    storeName: 'TZORAH EMPORIUM',
+    tagline: 'The Alchemy of Scents, Pure Oils & Intimate Luxuries',
+    supportEmail: 'concierge@tzorahemporium.com',
+    telephone: '+234 (0) 800 TZORAH',
     whatsappNumber: '',
-    businessHours: 'Mon – Fri, 9am – 6pm',
-    contactAddress: 'Lagos, Nigeria',
-    responseTime: 'Response within 24 hours',
+    businessHours: 'Mon – Sat, 9am – 8pm',
+    contactAddress: 'Victoria Island / Lekki, Lagos, Nigeria',
+    responseTime: 'Response within 2 hours',
     freeShippingThreshold: 50000,
     standardShippingFee: 3500,
+    expressShippingFee: 7500,
     currency: 'NGN',
-    autoApproveOrders: false,
+    autoApproveOrders: true,
     announcementEnabled: true,
-    announcementText: 'FREE SHIPPING ON ORDERS OVER ₦50,000',
-    announcementBg: '#1a1a1a',
+    announcementText: 'FREE EXPRESS NATIONWIDE SHIPPING ON ORDERS OVER ₦50,000 • 100% AUTHENTIC GUARANTEE',
+    announcementBg: '#111111',
     bankAccounts: [
       {
         id: '1',
         bankName: 'Guaranty Trust Bank (GTBank)',
-        accountNumber: '0123456789',
-        accountName: 'EL. KELVINERO NIGERIA LTD',
+        accountNumber: '0812345678',
+        accountName: 'TZORAH EMPORIUM ENTERPRISES',
         instructions: 'Please use your Order ID as the transfer description/reference.'
       }
     ]

@@ -53,10 +53,10 @@
             <line x1="40" y1="210" x2="580" y2="210" stroke="rgba(255,255,255,0.08)" />
 
             <!-- Y Axis labels -->
-            <text x="15" y="24" class="axis-lbl">$50k</text>
-            <text x="15" y="74" class="axis-lbl">$35k</text>
-            <text x="15" y="124" class="axis-lbl">$20k</text>
-            <text x="15" y="174" class="axis-lbl">$5k</text>
+            <text x="15" y="24" class="axis-lbl">₦50k</text>
+            <text x="15" y="74" class="axis-lbl">₦35k</text>
+            <text x="15" y="124" class="axis-lbl">₦20k</text>
+            <text x="15" y="174" class="axis-lbl">₦5k</text>
 
             <!-- Area under the curve -->
             <path
@@ -189,7 +189,7 @@
                 </td>
                 <td class="font-mono">{{ prod.salesCount }} pcs</td>
                 <td class="font-mono">{{ prod.conversion }}%</td>
-                <td class="font-semibold text-white font-mono">${{ prod.revenue.toLocaleString() }}.00</td>
+                <td class="font-semibold text-white font-mono">₦{{ prod.revenue.toLocaleString() }}.00</td>
               </tr>
             </tbody>
           </table>
@@ -200,7 +200,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 definePageMeta({
   layout: 'admin',
@@ -208,11 +208,11 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Reports & Analytics | EL. Kelvinero Admin',
-  meta: [{ name: 'description', content: 'Detailed analysis reports, performance indexes, and sales charts.' }]
+  title: 'Analytics & Reports | TZORAH EMPORIUM Admin',
+  meta: [{ name: 'description', content: 'Store performance metrics, financial breakdowns and acquisition analytics.' }]
 })
 
-const selectedTimeframe = ref('ytd')
+const selectedTimeframe = ref('30d')
 
 const timeframeLabel = computed(() => {
   const map = {
@@ -242,11 +242,14 @@ const revenueLinePath = computed(() => {
   return 'M 50,180 L 130,140 L 220,90 L 310,130 L 400,60 L 490,80 L 580,30'
 })
 
+const adminToken = useCookie('adminToken')
+const loading = ref(true)
+
 // Stats row metrics
 const performanceStats = ref([
-  { label: 'GROSS MERCHANDISE VALUE', value: '$84,650.00', change: '+14.2%', up: true },
-  { label: 'AVERAGE BASKET SIZE', value: '$135.50', change: '+2.1%', up: true },
-  { label: 'STORE SESSIONS', value: '42,192', change: '-4.6%', up: false },
+  { label: 'GROSS MERCHANDISE VALUE', value: '₦0.00', change: '+14.2%', up: true },
+  { label: 'AVERAGE BASKET SIZE', value: '₦0.00', change: '+2.1%', up: true },
+  { label: 'TOTAL ORDERS LOGGED', value: '0', change: '+8.4%', up: true },
   { label: 'CHECKOUT CONVERSION', value: '3.12%', change: '+0.4%', up: true }
 ])
 
@@ -259,13 +262,31 @@ const trafficChannels = ref([
 ])
 
 // Leaderboard products
-const leaderboardProducts = ref([
-  { id: 'p1', name: 'SIGNATURE TEE', category: 'T-SHIRTS', salesCount: 142, revenue: 8378, conversion: 4.2 },
-  { id: 'p2', name: 'CLASSIC HOODIE', category: 'HOODIES', salesCount: 98, revenue: 8722, conversion: 3.8 },
-  { id: 'p5', name: 'HERITAGE TEE', category: 'T-SHIRTS', salesCount: 110, revenue: 7150, conversion: 3.5 },
-  { id: 'p4', name: 'KNIT POLO', category: 'POLOS', salesCount: 76, revenue: 6764, conversion: 2.9 },
-  { id: 'p3', name: 'OVERSIZE SWEATSHIRT', category: 'HOODIES', salesCount: 84, revenue: 6636, conversion: 3.1 }
-])
+const leaderboardProducts = ref([])
+
+const fetchAnalytics = async () => {
+  if (!adminToken.value) return
+  loading.value = true
+  try {
+    const data = await $fetch('/api/v1/analytics', {
+      headers: { Authorization: `Bearer ${adminToken.value}` }
+    })
+    if (data) {
+      performanceStats.value[0].value = `₦${(data.totalRevenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+      performanceStats.value[1].value = `₦${(data.avgBasket || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+      performanceStats.value[2].value = String(data.totalOrders || 0)
+      if (data.leaderboard && data.leaderboard.length > 0) {
+        leaderboardProducts.value = data.leaderboard
+      }
+    }
+  } catch (err) {
+    console.error('Failed to fetch analytics:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(fetchAnalytics)
 
 const sortedLeaderboard = computed(() => {
   return [...leaderboardProducts.value].sort((a, b) => b.revenue - a.revenue)

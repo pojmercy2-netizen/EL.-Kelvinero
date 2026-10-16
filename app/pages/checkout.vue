@@ -11,8 +11,8 @@
         </svg>
       </NuxtLink>
       <NuxtLink to="/" class="co-logo">
-        <img src="/logo.png" alt="EL. Kelvinero" />
-        <span>EL. KELVINERO</span>
+        <img src="/logo.png" alt="TZORAH EMPORIUM" />
+        <span>TZORAH EMPORIUM</span>
       </NuxtLink>
       <NuxtLink to="/cart" class="co-cart-icon" aria-label="Cart">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -180,7 +180,7 @@
                   <p class="co-radio-row__name">{{ method.name }}</p>
                   <p class="co-radio-row__sub">{{ method.days }}</p>
                 </div>
-                <span class="co-radio-row__price">{{ method.price === 0 ? 'FREE' : '$' + method.price.toFixed(2) }}</span>
+                <span class="co-radio-row__price">{{ method.price === 0 ? 'FREE' : currencySymbol + method.price.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</span>
               </label>
             </div>
           </div>
@@ -446,6 +446,57 @@
               </div>
             </div>
 
+            <!-- Step 2: Upload Payment Receipt -->
+            <div class="co-receipt-upload-box">
+              <div class="co-receipt-head">
+                <span class="co-receipt-step">STEP 2</span>
+                <h4 class="co-receipt-title">UPLOAD PAYMENT RECEIPT / PROOF</h4>
+              </div>
+              <p class="co-receipt-desc">
+                Attach a screenshot or photo of your transfer confirmation so our team can immediately verify and approve your order.
+              </p>
+
+              <!-- Uploaded Success State -->
+              <div v-if="receiptUploaded" class="co-receipt-success">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <div class="co-receipt-success-text">
+                  <strong>RECEIPT SUBMITTED SUCCESSFULLY!</strong>
+                  <span>Your receipt has been submitted to the admin console for instant approval.</span>
+                </div>
+              </div>
+
+              <!-- Upload Form -->
+              <div v-else class="co-receipt-form">
+                <label class="co-file-dropzone" :class="{ 'has-file': Boolean(receiptPreview) }">
+                  <input type="file" accept="image/*,application/pdf" class="co-file-input" @change="onReceiptFileSelected" />
+                  
+                  <div v-if="receiptPreview" class="co-file-preview-wrap">
+                    <img :src="receiptPreview" alt="Receipt Preview" class="co-file-thumb" />
+                    <div class="co-file-info">
+                      <span class="co-file-name">{{ receiptFile?.name }}</span>
+                      <span class="co-file-change">Click to select a different image</span>
+                    </div>
+                  </div>
+
+                  <div v-else class="co-dropzone-prompt">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Click to browse or drop transfer screenshot / receipt</span>
+                    <small>Supports PNG, JPG, JPEG, WEBP or PDF</small>
+                  </div>
+                </label>
+
+                <button
+                  v-if="receiptFile"
+                  class="btn-upload-receipt"
+                  :disabled="uploadingReceipt"
+                  @click="uploadReceipt"
+                >
+                  <span v-if="uploadingReceipt">UPLOADING RECEIPT...</span>
+                  <span v-else>📤 SUBMIT RECEIPT TO ADMIN</span>
+                </button>
+              </div>
+            </div>
+
             <div class="co-modal-actions">
               <NuxtLink to="/profile" class="btn-modal-primary">VIEW MY ORDERS</NuxtLink>
               <NuxtLink to="/shop" class="btn-modal-secondary">CONTINUE SHOPPING</NuxtLink>
@@ -464,8 +515,8 @@ import { useAuth } from '~/composables/useAuth'
 const { currentUser } = useAuth()
 
 useHead({
-  title: 'Checkout | EL. Kelvinero',
-  meta: [{ name: 'description', content: 'Review your order and complete your purchase securely.' }]
+  title: 'Checkout | TZORAH EMPORIUM',
+  meta: [{ name: 'description', content: 'Review your order and complete your purchase securely with TZORAH EMPORIUM.' }]
 })
 
 const cartCount = useState('cartCount', () => 0)
@@ -495,13 +546,51 @@ const defaultBankAccounts = [
     id: '1',
     bankName: 'Guaranty Trust Bank (GTBank)',
     accountNumber: '0123456789',
-    accountName: 'EL. KELVINERO NIGERIA LTD',
+    accountName: 'TZORAH EMPORIUM ENTERPRISES',
     instructions: 'Please use your Order ID as the transfer description/reference.'
   }
 ]
 
 const showBankModal = ref(false)
 const placedOrderData = ref<any>(null)
+const receiptFile = ref<File | null>(null)
+const receiptPreview = ref<string | null>(null)
+const uploadingReceipt = ref(false)
+const receiptUploaded = ref(false)
+
+const onReceiptFileSelected = (e: any) => {
+  const file = e.target.files?.[0]
+  if (file) {
+    receiptFile.value = file
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      receiptPreview.value = event.target?.result as string
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+const uploadReceipt = async () => {
+  if (!placedOrderData.value?.id || !receiptFile.value) return
+  uploadingReceipt.value = true
+  try {
+    const formData = new FormData()
+    formData.append('receipt', receiptFile.value)
+
+    await $fetch(`/api/v1/orders/${placedOrderData.value.id}/receipt`, {
+      method: 'POST',
+      body: formData
+    })
+
+    receiptUploaded.value = true
+    toasts.value.push({ id: Date.now(), message: '✓ Receipt successfully submitted to admin!' })
+  } catch (err: any) {
+    console.error('Failed to upload receipt:', err)
+    toasts.value.push({ id: Date.now(), message: `❌ ${err?.data?.message || err?.message || 'Failed to upload receipt'}` })
+  } finally {
+    uploadingReceipt.value = false
+  }
+}
 
 const copyToClipboard = (text: string, label: string) => {
   if (navigator.clipboard) {
@@ -514,9 +603,9 @@ onMounted(async () => {
   await fetchStoreSettings()
   if (currentUser.value) {
     address.value.name = `${currentUser.value.firstName || ''} ${currentUser.value.lastName || ''}`.trim() || 'Valued Customer'
-    address.value.email = currentUser.value.email || 'customer@elkelvinero.com'
+    address.value.email = currentUser.value.email || 'customer@tzorahemporium.com'
     address.value.phone = currentUser.value.phone || '+234 800 000 0000'
-    address.value.street = currentUser.value.address?.street || '123 Fashion Street'
+    address.value.street = currentUser.value.address?.street || '123 Victoria Island'
     address.value.apt = currentUser.value.address?.apt || 'Suite 100'
     address.value.city = currentUser.value.address?.city || 'Lagos'
     address.value.state = currentUser.value.address?.state || 'Lagos'
@@ -525,26 +614,27 @@ onMounted(async () => {
   } else {
     // Default fallback mock values
     address.value.name = 'John Doe'
-    address.value.street = '123 Fashion Street'
+    address.value.street = '123 Victoria Island'
     address.value.apt = 'Apt 4B'
     address.value.city = 'Lagos'
     address.value.state = 'Lagos'
     address.value.zip = '100001'
     address.value.country = 'Nigeria'
     address.value.phone = '+234 800 000 0000'
-    address.value.email = 'customer@elkelvinero.com'
+    address.value.email = 'customer@tzorahemporium.com'
   }
 })
 
 const freeShippingThreshold = computed(() => Number(storeSettings.value.freeShippingThreshold || 150))
 const standardShippingFee = computed(() => Number(storeSettings.value.standardShippingFee || 15))
+const expressShippingFee = computed(() => Number(storeSettings.value.expressShippingFee || 7500))
 
 const currencySymbol = computed(() => {
   const c = storeSettings.value?.currency || 'NGN'
   if (c === 'NGN') return '₦'
   if (c === 'EUR') return '€'
   if (c === 'GBP') return '£'
-  return '$'
+  return '₦'
 })
 
 // ─── Shipping Methods ──────────────────────────────
@@ -553,7 +643,7 @@ const shippingMethods = computed(() => {
   const stdPrice = isFree ? 0 : standardShippingFee.value
   return [
     { id: 'standard', name: 'Standard Shipping', days: '5–7 Business Days', price: stdPrice },
-    { id: 'express', name: 'Express Shipping', days: '2–3 Business Days', price: 25.00 }
+    { id: 'express', name: 'Express Shipping', days: '2–3 Business Days', price: expressShippingFee.value }
   ]
 })
 const selectedShipping = ref('standard')
@@ -619,9 +709,12 @@ const placeOrder = async () => {
       email: email,
       phone: address.value.phone || null,
       shipping_address: shippingAddress,
+      total_price: estimatedTotal.value,
       items: cartItems.value.map((item: any) => ({
         product_id: item.id,
-        quantity: item.quantity
+        quantity: item.quantity,
+        price: item.price,
+        name: item.name
       }))
     }
 
@@ -1383,6 +1476,190 @@ const placeOrder = async () => {
   border-radius: 2px;
   margin: 0;
   line-height: 1.4;
+}
+
+/* ─── Receipt Upload Box ──────────────────────── */
+.co-receipt-upload-box {
+  background: rgba(201, 169, 110, 0.05);
+  border: 1px dashed rgba(201, 169, 110, 0.35);
+  border-radius: 4px;
+  padding: 1.15rem;
+  margin-bottom: 1.25rem;
+}
+
+.co-receipt-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.co-receipt-step {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: var(--color-accent, #c9a96e);
+  color: #111;
+  padding: 0.15rem 0.45rem;
+  border-radius: 2px;
+}
+
+.co-receipt-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
+  margin: 0;
+}
+
+.co-receipt-desc {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.4;
+  margin: 0 0 0.85rem 0;
+}
+
+.co-receipt-success {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  padding: 0.85rem 1rem;
+  border-radius: 3px;
+}
+
+.co-receipt-success-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.co-receipt-success-text strong {
+  font-size: 0.76rem;
+  color: #22c55e;
+  letter-spacing: 0.05em;
+}
+
+.co-receipt-success-text span {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.co-receipt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.co-file-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  padding: 1.15rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.co-file-dropzone:hover {
+  border-color: var(--color-accent, #c9a96e);
+  background: rgba(201, 169, 110, 0.04);
+}
+
+.co-file-dropzone.has-file {
+  border-style: solid;
+  border-color: rgba(201, 169, 110, 0.5);
+}
+
+.co-file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.co-dropzone-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.35rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.75rem;
+}
+
+.co-dropzone-prompt small {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.co-file-preview-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.co-file-thumb {
+  width: 54px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid var(--color-accent, #c9a96e);
+}
+
+.co-file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: left;
+}
+
+.co-file-name {
+  font-size: 0.75rem;
+  color: #fff;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.co-file-change {
+  font-size: 0.66rem;
+  color: var(--color-accent, #c9a96e);
+}
+
+.btn-upload-receipt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--color-accent, #c9a96e);
+  color: #111;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.75rem 1.25rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  width: 100%;
+}
+
+.btn-upload-receipt:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-upload-receipt:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .co-modal-actions {

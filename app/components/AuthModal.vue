@@ -12,9 +12,9 @@
 
         <!-- Brand Logo/Header -->
         <div class="auth-modal__header">
-          <img src="/logo.png" alt="EL. Kelvinero Logo" class="auth-modal__logo" />
-          <h2 class="auth-modal__title">EL. KELVINERO</h2>
-          <p class="auth-modal__subtitle">TIMELESS LUXURY APPAREL</p>
+          <img src="/logo.png" alt="TZORAH EMPORIUM Logo" class="auth-modal__logo" />
+          <h2 class="auth-modal__title">TZORAH EMPORIUM</h2>
+          <p class="auth-modal__subtitle">LUXURY PERFUMES, BOTANICAL OILS & BOUDOIR</p>
         </div>
 
         <!-- Mode Selector Tabs -->

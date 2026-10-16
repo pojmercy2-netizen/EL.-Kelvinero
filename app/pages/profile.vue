@@ -40,11 +40,6 @@
           </div>
           <div class="profile-stat__divider"></div>
           <div class="profile-stat">
-            <span class="profile-stat__num">₦{{ totalSpent }}</span>
-            <span class="profile-stat__label">Total Spent</span>
-          </div>
-          <div class="profile-stat__divider"></div>
-          <div class="profile-stat">
             <span class="profile-stat__num">{{ deliveredCount }}</span>
             <span class="profile-stat__label">Delivered</span>
           </div>
@@ -84,7 +79,7 @@
         <div class="welcome-banner">
           <div class="welcome-banner__text">
             <h2>Welcome back, {{ user.firstName }}! 👋</h2>
-            <p>Here's a snapshot of your EL. Kelvinero account.</p>
+            <p>Here's a snapshot of your TZORAH EMPORIUM account.</p>
           </div>
           <NuxtLink to="/shop" class="welcome-banner__cta">SHOP NEW ARRIVALS →</NuxtLink>
         </div>
@@ -292,9 +287,25 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                   {{ order.shipping_address }}
                 </div>
-                <div class="order-card__total-row">
-                  <span class="order-card__total-label">Total</span>
-                  <span class="order-card__total">₦{{ Number(order.total_price).toLocaleString() }}</span>
+                
+                <div class="order-card__footer-right">
+                  <!-- Payment Receipt Status & Action -->
+                  <div v-if="order.payment_receipt" class="order-receipt-pill order-receipt-pill--uploaded">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Proof of Payment Attached</span>
+                    <a :href="order.payment_receipt" target="_blank" class="receipt-pill-link">View</a>
+                  </div>
+                  <div v-else-if="order.payment_status !== 'Paid'" class="order-receipt-action">
+                    <label class="btn-profile-upload-receipt">
+                      <input type="file" accept="image/*,application/pdf" class="hidden-file-input" @change="uploadOrderReceipt(order, $event)" />
+                      <span>📸 Upload Receipt</span>
+                    </label>
+                  </div>
+
+                  <div class="order-card__total-row">
+                    <span class="order-card__total-label">Total</span>
+                    <span class="order-card__total">₦{{ Number(order.total_price).toLocaleString() }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -500,8 +511,8 @@ import { useAuth } from '~/composables/useAuth'
 definePageMeta({ middleware: 'auth' })
 
 useHead({
-  title: 'My Account | EL. Kelvinero',
-  meta: [{ name: 'description', content: 'Manage your EL. Kelvinero account, orders, wishlist and settings.' }]
+  title: 'My Account | TZORAH EMPORIUM',
+  meta: [{ name: 'description', content: 'Manage your TZORAH EMPORIUM account, orders, wishlist and settings.' }]
 })
 
 const { currentUser, logout: authLogout } = useAuth()
@@ -586,9 +597,26 @@ onMounted(fetchOrders)
 
 const openOrderDetail = (order) => { selectedOrder.value = order }
 
-const totalSpent = computed(() =>
-  orders.value.reduce((sum, o) => sum + Number(o.total_price), 0).toLocaleString()
-)
+const uploadOrderReceipt = async (order, e) => {
+  const file = e.target.files?.[0]
+  if (!file || !order?.id) return
+  try {
+    const formData = new FormData()
+    formData.append('receipt', file)
+
+    const res = await $fetch(`/api/v1/orders/${order.id}/receipt`, {
+      method: 'POST',
+      body: formData
+    })
+
+    order.payment_receipt = res.payment_receipt
+    toasts.value.push({ id: Date.now(), message: `✓ Receipt for Order #${order.id} uploaded successfully!` })
+  } catch (err) {
+    console.error('Failed to upload receipt:', err)
+    toasts.value.push({ id: Date.now(), message: `❌ ${err?.data?.message || err?.message || 'Failed to upload receipt'}` })
+  }
+}
+
 const deliveredCount = computed(() =>
   orders.value.filter(o => o.status === 'Delivered').length
 )
@@ -962,6 +990,58 @@ const formatDate = (dateStr) => {
   font-size: 0.72rem; color: var(--color-text-muted);
   max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+.order-card__footer-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.order-receipt-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 99px;
+}
+
+.order-receipt-pill--uploaded {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.receipt-pill-link {
+  font-weight: 700;
+  text-decoration: underline;
+  color: #15803d;
+  margin-left: 0.2rem;
+}
+
+.btn-profile-upload-receipt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #111;
+  background: var(--color-accent, #c9a96e);
+  padding: 0.4rem 0.85rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-profile-upload-receipt:hover {
+  opacity: 0.88;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
 .order-card__total-row { display: flex; align-items: center; gap: 0.75rem; }
 .order-card__total-label { font-size: 0.72rem; color: var(--color-text-muted); font-weight: 600; }
 .order-card__total { font-size: 1rem; font-weight: 800; color: var(--color-text-dark); }

@@ -3,8 +3,8 @@
     <div class="login-container">
       <div class="login-card">
         <div class="login-header">
-          <img src="/logo.png" alt="EL. Kelvinero Logo" class="login-logo" />
-          <h1 class="login-title">EL. KELVINERO</h1>
+          <img src="/logo.png" alt="TZORAH EMPORIUM Logo" class="login-logo" />
+          <h1 class="login-title">TZORAH EMPORIUM</h1>
           <p class="login-subtitle">ADMIN CONSOLE PORTAL</p>
         </div>
 
@@ -16,7 +16,7 @@
                 id="email"
                 v-model="email"
                 type="email"
-                placeholder="admin@elkelvinero.com"
+                placeholder="admin@tzorahemporium.com"
                 class="form-input"
                 required
                 autocomplete="email"
@@ -54,7 +54,7 @@
       </div>
 
       <div class="login-footer">
-        <p>&copy; 2026 EL. KELVINERO. All rights reserved.</p>
+        <p>&copy; 2026 TZORAH EMPORIUM. All rights reserved.</p>
         <p class="demo-credential-tip">Sign in with your registered admin account.</p>
       </div>
     </div>
@@ -70,8 +70,8 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Admin Access Gate | EL. Kelvinero',
-  meta: [{ name: 'description', content: 'Secure gateway portal for EL. Kelvinero administration console.' }]
+  title: 'Admin Access Gate | TZORAH EMPORIUM',
+  meta: [{ name: 'description', content: 'Secure gateway portal for TZORAH EMPORIUM administration console.' }]
 })
 
 const router = useRouter()

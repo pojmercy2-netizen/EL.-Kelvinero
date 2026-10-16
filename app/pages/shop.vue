@@ -4,16 +4,17 @@
     <!-- ═══════════════════════════════════════════ -->
     <!-- HERO HEADER                                 -->
     <!-- ═══════════════════════════════════════════ -->
-    <header class="shop-hero">
-      <img src="/images/shop_hero_banner.png" alt="EL. Kelvinero Shop Banner" class="shop-hero__bg" />
+    <header class="shop-hero" style="display:flex;align-items:center;justify-content:center;text-align:center;">
+      <img src="/hero_fragrances.jpg" alt="TZORAH EMPORIUM Shop Banner" class="shop-hero__bg" />
       <div class="shop-hero__overlay"></div>
-      <div class="shop-hero__content">
-        <h1 class="shop-hero__title">The Shop</h1>
-        <p class="shop-hero__sub">Elevated essentials designed for the modern wardrobe.</p>
+      <div class="shop-hero__content" style="position:relative;z-index:2;text-align:center;width:100%;max-width:680px;padding:0 1.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;">
+        <span class="shop-hero__eyebrow" style="text-align:center;display:block;width:100%;">THE APOTHECARY &amp; BOUTIQUE</span>
+        <h1 class="shop-hero__title" style="text-align:center;width:100%;">The Shop</h1>
+        <p class="shop-hero__sub" style="text-align:center;width:100%;">USA oil perfumes, royal Middle Eastern attars, pure botanical oils, candlecraft &amp; discreet private boudoir.</p>
       </div>
       <!-- Logo watermark overlay -->
       <div class="img-logo-overlay img-logo-overlay--br">
-        <img src="/logo.png" alt="EL. Kelvinero" />
+        <img src="/logo.png" alt="TZORAH EMPORIUM" />
       </div>
     </header>
 
@@ -24,13 +25,13 @@
       
       <!-- Filters and Toolbar -->
       <div class="shop-toolbar">
-        <!-- Categories (Left) -->
+        <!-- Main Categories (Left) -->
         <div class="shop-filters__categories">
           <button
             v-for="cat in categories"
             :key="cat"
             :class="['shop-filter-btn', { 'shop-filter-btn--active': activeCategory === cat }]"
-            @click="activeCategory = cat"
+            @click="setCategory(cat)"
           >
             {{ cat }}
           </button>
@@ -47,13 +48,38 @@
         </div>
       </div>
 
+      <!-- Subcategory Pills (Crucial for OILS, PERFUMES, ADULT SECTION) -->
+      <div v-if="subcategoriesForActiveCat.length > 0" class="shop-subcategories-bar animate-fade-in">
+        <span class="subcat-bar__label">FILTER BY SUB-CATEGORY:</span>
+        <div class="subcat-bar__pills">
+          <button
+            v-for="sub in subcategoriesForActiveCat"
+            :key="sub"
+            :class="['subcat-pill', { 'subcat-pill--active': activeSubcategory === sub }]"
+            @click="activeSubcategory = sub"
+          >
+            {{ sub }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Adult Section Discretion Notice -->
+      <div v-if="activeCategory === 'ADULT SECTION'" class="adult-notice animate-fade-in">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>100% DISCREET &amp; CONFIDENTIAL PACKAGING GUARANTEED. SHIPPED IN PLAIN UNBRANDED BOXES. 18+ ONLY.</span>
+      </div>
+
       <!-- Active Filters Summary -->
-      <div class="shop-active-filters" v-if="activeCategory !== 'ALL'">
+      <div class="shop-active-filters" v-if="activeCategory !== 'ALL' || activeSubcategory !== 'ALL'">
         <span class="shop-active-tag">
           {{ activeCategory }}
-          <button class="shop-active-tag__close" @click="activeCategory = 'ALL'">&times;</button>
+          <span v-if="activeSubcategory !== 'ALL'"> &bull; {{ activeSubcategory }}</span>
+          <button class="shop-active-tag__close" @click="resetFilters">&times;</button>
         </span>
-        <button class="shop-clear-all" @click="activeCategory = 'ALL'">Clear All</button>
+        <button class="shop-clear-all" @click="resetFilters">Reset Filters</button>
       </div>
 
       <!-- Product Count -->
@@ -65,13 +91,15 @@
           <div class="product-card__image-container">
             <img :src="product.image" :alt="product.name" class="product-card__img" />
             
-            <!-- Chest Logo (Only for products carrying chest branding) -->
-            <div
-              v-if="product.logoColor"
-              :class="['product-card__chest-logo', 'product-card__chest-logo--' + product.logoColor]"
-            >
-              <img src="/logo.png" alt="EL. Kelvinero Logo" />
-            </div>
+            <!-- Category / Subcategory Badge -->
+            <span class="product-card__subcat-tag" v-if="product.subcategory || product.category">
+              {{ product.subcategory || product.category }}
+            </span>
+
+            <!-- Size / Volume Badge -->
+            <span class="product-card__size-badge" v-if="product.size">
+              {{ product.size }}
+            </span>
 
             <!-- Heart Wishlist Toggle -->
             <button
@@ -99,21 +127,17 @@
           </div>
           
           <div class="product-card__details">
-            <!-- Swatches (Static visual decoration / Interactive switcher) -->
-            <div class="product-card__swatches">
-              <span
-                v-for="color in product.colors"
-                :key="color"
-                :class="['swatch', { 'swatch--active': activeSwatches[product.id] === color }]"
-                :style="{ backgroundColor: getColorHex(color) }"
-                @click="activeSwatches[product.id] = color"
-              ></span>
-            </div>
-
             <h3 class="product-card__title">{{ product.name }}</h3>
+            <p class="product-card__desc-snippet" v-if="product.description">{{ product.description }}</p>
             <p class="product-card__price">{{ product.priceFormatted }}</p>
           </div>
         </div>
+      </div>
+
+      <!-- Empty State -->
+      <div v-if="filteredProducts.length === 0" class="shop-empty">
+        <p>No products found under this selection.</p>
+        <button class="btn btn-secondary" @click="resetFilters">VIEW ALL PRODUCTS</button>
       </div>
 
     </main>
@@ -126,19 +150,79 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 useHead({
-  title: 'Shop All | EL. Kelvinero',
-  meta: [{ name: 'description', content: 'Shop the premium timeless essentials from EL. Kelvinero.' }]
+  title: 'Shop All | TZORAH EMPORIUM',
+  meta: [{ name: 'description', content: 'Shop authentic USA perfume oils, Middle Eastern scents, designer fragrances, pure essential & natural oils, candle supplies, and private intimates.' }]
 })
 
-const cartCount = useState('cartCount')
+const route = useRoute()
+const cartCount = useState('cartCount', () => 0)
 const cartItems = useState('cartItems', () => [])
 const toasts = useState('toasts', () => [])
 
-const categories = ['ALL', 'T-SHIRTS', 'HOODIES', 'SWEATSHIRTS', 'POLOS', 'JACKETS', 'PANTS', 'ACCESSORIES']
+const categories = [
+  'ALL',
+  'FRAGRANCE',
+  'PERFUMES',
+  'OILS',
+  'UNSCENTED PRODUCTS',
+  'CANDLE MAKING ACCESSORIES',
+  'PET BODY CARE PRODUCTS',
+  'ADULT SECTION'
+]
+
 const activeCategory = ref('ALL')
+const activeSubcategory = ref('ALL')
 const sortBy = ref('featured')
+
+// Subcategories mapping
+const subcategoriesForActiveCat = computed(() => {
+  if (activeCategory.value === 'FRAGRANCE') {
+    return [
+      'ALL',
+      'USA Oil Perfumes',
+      'Middle Eastern Perfumes',
+      'Authentic Designer Perfumes',
+      'Niche Products',
+      'Fragrance Oils',
+      'Essential Oils',
+      'Natural Oils',
+      'Waxes & Bases',
+      'Grooming & Washes'
+    ]
+  }
+  if (activeCategory.value === 'PERFUMES') {
+    return ['ALL', 'USA Oil Perfumes', 'Middle Eastern Perfumes', 'Authentic Designer Perfumes', 'Niche Products']
+  }
+  if (activeCategory.value === 'OILS') {
+    return ['ALL', 'Fragrance Oils', 'Essential Oils', 'Natural Oils']
+  }
+  if (activeCategory.value === 'CANDLE MAKING ACCESSORIES') {
+    return ['ALL', 'Waxes & Bases', 'Wicks & Hardware', 'Tools & Vessels']
+  }
+  if (activeCategory.value === 'PET BODY CARE PRODUCTS') {
+    return ['ALL', 'Grooming & Washes', 'Balms & Salves']
+  }
+  if (activeCategory.value === 'UNSCENTED PRODUCTS') {
+    return ['ALL', 'Unscented Body Care', 'Unscented Skincare']
+  }
+  if (activeCategory.value === 'ADULT SECTION') {
+    return ['ALL', 'Adult Toys', 'Lingeries']
+  }
+  return []
+})
+
+const setCategory = (cat) => {
+  activeCategory.value = cat
+  activeSubcategory.value = 'ALL'
+}
+
+const resetFilters = () => {
+  activeCategory.value = 'ALL'
+  activeSubcategory.value = 'ALL'
+}
 
 // Track wishlist items
 const wishlisted = ref([])
@@ -159,104 +243,402 @@ const showToast = (message) => {
   })
 }
 
-// Color switcher hex values
-const getColorHex = (name) => {
-  const colors = {
-    'black': '#121212',
-    'white': '#f8f9fa',
-    'cream': '#ebe7e0',
-    'tan': '#d2b48c',
-    'grey': '#8e8e93',
-    'navy': '#1a233d',
-    'beige': '#e1d5c2',
-    'brown': '#5c4033',
-    'olive': '#556b2f',
-    'camel': '#c19a6b'
-  }
-  return colors[name.toLowerCase()] || '#cccccc'
-}
-
-// Products list - initially empty, filled from live API
-const products = ref([
-  { id: 1, name: 'SIGNATURE TEE', category: 'T-SHIRTS', price: 59.00, priceFormatted: '$59.00', image: '/images/product_tee.png', colors: ['black', 'cream', 'grey'] },
-  { id: 2, name: 'CLASSIC HOODIE', category: 'HOODIES', price: 89.00, priceFormatted: '$89.00', image: '/images/product_hoodie.png', colors: ['cream', 'black', 'brown'] },
-  { id: 3, name: 'OVERSIZE SWEATSHIRT', category: 'HOODIES', price: 79.00, priceFormatted: '$79.00', image: '/images/product_sweatshirt.png', colors: ['black', 'grey', 'white'] },
-  { id: 4, name: 'KNIT POLO', category: 'POLOS', price: 89.00, priceFormatted: '$89.00', image: '/images/product_polo.png', colors: ['beige', 'navy', 'black'] },
-  { id: 5, name: 'HERITAGE TEE', category: 'T-SHIRTS', price: 65.00, priceFormatted: '$65.00', image: '/images/about_hero_model.png', colors: ['cream', 'white'] },
-  { id: 6, name: 'CLASSIC UTILITY JACKET', category: 'JACKETS', price: 149.00, priceFormatted: '$149.00', image: '/images/brand_bg.png', colors: ['black', 'brown'] },
-  { id: 7, name: 'BOMBER JACKET', category: 'JACKETS', price: 169.00, priceFormatted: '$169.00', image: '/images/hero_model.png', colors: ['navy', 'black'] },
-  { id: 8, name: 'ESSENTIAL SWEATPANTS', category: 'PANTS', price: 79.00, priceFormatted: '$79.00', image: '/images/lookbook_lifestyle.png', colors: ['grey', 'black', 'beige'] }
-])
-
+// Currency Symbol
 const { storeSettings, fetchStoreSettings } = useStoreSettings()
-
 const currencySymbol = computed(() => {
   const c = storeSettings.value?.currency || 'NGN'
   if (c === 'NGN') return '₦'
-  if (c === 'EUR') return '€'
-  if (c === 'GBP') return '£'
-  return '$'
+  if (c === 'USD') return '$'
+  return '₦'
 })
 
-const mapProductData = (dataList) => {
-  if (!Array.isArray(dataList) || dataList.length === 0) return null
-  return dataList.map(p => {
-    let parsedColors = ['black']
-    if (Array.isArray(p.color)) parsedColors = p.color
-    else if (typeof p.color === 'string' && p.color.startsWith('[')) {
-      try { parsedColors = JSON.parse(p.color) } catch {}
-    }
-    const priceVal = parseFloat(p.price)
+// Complete Default Products Catalogue for Or. Store
+const defaultCatalogue = [
+  // USA Oil Perfumes
+  {
+    id: 'perf_usa_1',
+    name: 'Baccarat Rouge 540 Pure Oil (USA)',
+    category: 'PERFUMES',
+    subcategory: 'USA Oil Perfumes',
+    price: 38500,
+    image: '/images/products/perf_usa_1.png',
+    description: 'Ultra-concentrated 100% pure undiluted perfume oil imported from USA fragrance labs.',
+    size: '50ml'
+  },
+  {
+    id: 'perf_usa_2',
+    name: 'Aventus Imperial Undiluted Oil (USA)',
+    category: 'PERFUMES',
+    subcategory: 'USA Oil Perfumes',
+    price: 32000,
+    image: '/images/products/perf_usa_2.png',
+    description: 'Grade-A USA oil perfume. Bergamot, blackcurrant, birch smoke and oakmoss.',
+    size: '30ml'
+  },
+  {
+    id: 'perf_usa_3',
+    name: 'Santal Noir 33 Concentrated Oil (USA)',
+    category: 'PERFUMES',
+    subcategory: 'USA Oil Perfumes',
+    price: 35000,
+    image: '/images/products/perf_usa_3.png',
+    description: 'Smoky sandalwood and cardamom aroma formulated in pure oil medium. 24+ hour longevity.',
+    size: '50ml'
+  },
+
+  // Middle Eastern Perfumes
+  {
+    id: 'perf_me_1',
+    name: 'Lattafa Khamrah Royale EDP',
+    category: 'PERFUMES',
+    subcategory: 'Middle Eastern Perfumes',
+    price: 48000,
+    image: '/images/products/perf_me_1.png',
+    description: 'Oriental gourmand masterpiece with rich cognac accord, cinnamon, dates and smoky vanilla.',
+    size: '100ml'
+  },
+  {
+    id: 'perf_me_2',
+    name: 'Swiss Arabian Shaghaf Oud Gold Extrait',
+    category: 'PERFUMES',
+    subcategory: 'Middle Eastern Perfumes',
+    price: 55000,
+    image: '/images/products/perf_me_2.png',
+    description: 'Lavish blend of decadent agarwood (oud), rich golden praline, rose and warm vanilla.',
+    size: '75ml'
+  },
+  {
+    id: 'perf_me_3',
+    name: 'Al Haramain Amber Oud Gold Edition',
+    category: 'PERFUMES',
+    subcategory: 'Middle Eastern Perfumes',
+    price: 62000,
+    image: '/images/products/perf_me_3.png',
+    description: 'Bergamot and melon top notes intertwine with luscious amber, pineapple and musk.',
+    size: '120ml'
+  },
+
+  // Authentic Designer Perfumes
+  {
+    id: 'perf_des_1',
+    name: 'Bleu de Chanel Eau de Parfum (Original)',
+    category: 'PERFUMES',
+    subcategory: 'Authentic Designer Perfumes',
+    price: 185000,
+    image: '/images/products/perf_des_1.png',
+    description: '100% authentic sealed original. Aromatic-woody fragrance with cedar and sandalwood.',
+    size: '100ml'
+  },
+  {
+    id: 'perf_des_2',
+    name: 'Tom Ford Tobacco Vanille (Authentic)',
+    category: 'PERFUMES',
+    subcategory: 'Authentic Designer Perfumes',
+    price: 245000,
+    image: '/images/products/perf_des_2.png',
+    description: 'Opulent private blend. Luxurious tobacco leaf, aromatic spices, cocoa and wood sap.',
+    size: '50ml'
+  },
+  {
+    id: 'perf_des_3',
+    name: 'Dior Sauvage Elixir (Original)',
+    category: 'PERFUMES',
+    subcategory: 'Authentic Designer Perfumes',
+    price: 195000,
+    image: '/images/products/perf_des_3.png',
+    description: 'Intoxicating spicy heart and rich woods liqueur trail.',
+    size: '60ml'
+  },
+
+  // Niche Products
+  {
+    id: 'perf_niche_1',
+    name: 'Maison Francis Kurkdjian Grand Soir',
+    category: 'PERFUMES',
+    subcategory: 'Niche Products',
+    price: 280000,
+    image: '/images/products/perf_niche_1.png',
+    description: 'Radiant Parisian evening encapsulated with deep labdanum, tonka bean and amber vanilla.',
+    size: '70ml'
+  },
+  {
+    id: 'perf_niche_2',
+    name: 'Amouage Interlude Man (The Blue Beast)',
+    category: 'PERFUMES',
+    subcategory: 'Niche Products',
+    price: 295000,
+    image: '/images/products/perf_niche_2.png',
+    description: 'Royal niche harmony of frankincense, myrrh, pimento berry oil and dark patchouli.',
+    size: '100ml'
+  },
+
+  // The Oils Bar — Fragrance Oils
+  {
+    id: 'oil_frag_1',
+    name: 'Golden Amber & Musk Fragrance Oil',
+    category: 'OILS',
+    subcategory: 'Fragrance Oils',
+    price: 18500,
+    image: '/images/products/oil_frag_1.png',
+    description: 'Cosmetic & candle grade premium fragrance oil. For body oils, candles, and diffusers.',
+    size: '100ml'
+  },
+  {
+    id: 'oil_frag_2',
+    name: 'French Vanilla Blossom Fragrance Oil',
+    category: 'OILS',
+    subcategory: 'Fragrance Oils',
+    price: 16000,
+    image: '/images/products/oil_frag_2.png',
+    description: 'Warm vanilla bean with floral undertones for personal body application and candle crafts.',
+    size: '100ml'
+  },
+
+  // The Oils Bar — Essential Oils
+  {
+    id: 'oil_ess_1',
+    name: '100% Pure French Lavender Essential Oil',
+    category: 'OILS',
+    subcategory: 'Essential Oils',
+    price: 12500,
+    image: '/images/products/oil_ess_1.png',
+    description: 'Steam-distilled pure botanical essence from Provence. Calming aromatherapy.',
+    size: '30ml'
+  },
+  {
+    id: 'oil_ess_2',
+    name: 'Australian Organic Tea Tree Essential Oil',
+    category: 'OILS',
+    subcategory: 'Essential Oils',
+    price: 11000,
+    image: '/images/products/oil_ess_2.png',
+    description: 'Therapeutic grade Melaleuca alternifolia. Natural clarifying and purifying qualities.',
+    size: '30ml'
+  },
+
+  // The Oils Bar — Natural Oils
+  {
+    id: 'oil_nat_1',
+    name: 'Cold-Pressed Golden Jojoba Natural Oil',
+    category: 'OILS',
+    subcategory: 'Natural Oils',
+    price: 15000,
+    image: '/images/products/oil_nat_1.png',
+    description: 'Unrefined virgin cold-pressed golden carrier oil. Deeply hydrates without clogging pores.',
+    size: '200ml'
+  },
+  {
+    id: 'oil_nat_2',
+    name: 'Organic Moroccan Argan Natural Oil',
+    category: 'OILS',
+    subcategory: 'Natural Oils',
+    price: 19500,
+    image: '/images/products/oil_nat_2.png',
+    description: 'Pure liquid gold for face, beard and hair. 100% cold-pressed cosmetic purity.',
+    size: '100ml'
+  },
+
+  // Unscented Products
+  {
+    id: 'unscented_1',
+    name: 'Raw Whipped Unscented Shea & Mango Butter',
+    category: 'UNSCENTED PRODUCTS',
+    subcategory: 'Unscented Body Care',
+    price: 14500,
+    image: '/images/products/unscented_1.png',
+    description: 'Silky whipped body butter crafted without essential oils or perfumes. 100% hypoallergenic.',
+    size: '250g'
+  },
+  {
+    id: 'unscented_2',
+    name: 'Hypoallergenic Unscented Lotion Base',
+    category: 'UNSCENTED PRODUCTS',
+    subcategory: 'Unscented Skincare',
+    price: 18000,
+    image: '/images/products/unscented_2.png',
+    description: 'Fragrance-free velvety moisturizer with ceramides. Perfect for sensitive skin.',
+    size: '500ml'
+  },
+
+  // Candle Making Accessories
+  {
+    id: 'candle_1',
+    name: 'Golden Soy Wax Flakes (1kg Craft Bag)',
+    category: 'CANDLE MAKING ACCESSORIES',
+    subcategory: 'Waxes & Bases',
+    price: 16500,
+    image: '/images/products/candle_1.png',
+    description: '100% natural biodegradable soy wax for container candles. Superior fragrance retention.',
+    size: '1kg'
+  },
+  {
+    id: 'candle_2',
+    name: 'Pre-Waxed Cotton Wicks & Sustainer Kit',
+    category: 'CANDLE MAKING ACCESSORIES',
+    subcategory: 'Wicks & Hardware',
+    price: 7500,
+    image: '/images/products/candle_2.png',
+    description: '100 lead-free natural cotton wicks with metal base sustainers and wick centering tools.',
+    size: '100 Pieces'
+  },
+  {
+    id: 'candle_3',
+    name: 'Stainless Steel Wax Melting Pitcher (900ml)',
+    category: 'CANDLE MAKING ACCESSORIES',
+    subcategory: 'Tools & Vessels',
+    price: 12500,
+    image: '/images/products/candle_3.png',
+    description: 'Drip-less precision pouring pot with heat-resistant ergonomic handle.',
+    size: '900ml'
+  },
+
+  // Pet Body Care Products
+  {
+    id: 'pet_1',
+    name: 'Calming Oatmeal & Chamomile Pet Coat Wash',
+    category: 'PET BODY CARE PRODUCTS',
+    subcategory: 'Grooming & Washes',
+    price: 13500,
+    image: '/images/products/pet_1.png',
+    description: 'pH balanced soothing shampoo for dogs and cats. Gently cleanses without irritation.',
+    size: '350ml'
+  },
+  {
+    id: 'pet_2',
+    name: 'Organic Herbal Paw & Nose Protection Balm',
+    category: 'PET BODY CARE PRODUCTS',
+    subcategory: 'Balms & Salves',
+    price: 8500,
+    image: '/images/products/pet_2.png',
+    description: 'All-natural lick-safe formula to soothe dry cracked paws and snouts.',
+    size: '60g'
+  },
+
+  // Adult Section (18+)
+  {
+    id: 'adult_toy_1',
+    name: 'Whisper Luxe Ergonomic Silicone Pulse Wand',
+    category: 'ADULT SECTION',
+    subcategory: 'Adult Toys',
+    price: 38000,
+    image: '/images/products/adult_toy_1.png',
+    description: 'Medical-grade velvety soft silicone wellness massager. 10 whisper-quiet vibration modes.',
+    size: 'Standard'
+  },
+  {
+    id: 'adult_toy_2',
+    name: 'Rose Petal Dual-Action Precision Stimulator',
+    category: 'ADULT SECTION',
+    subcategory: 'Adult Toys',
+    price: 42000,
+    image: '/images/products/adult_toy_2.png',
+    description: 'Gentle air-pulse and magnetic vibration technology in a discreet rose design.',
+    size: 'Compact'
+  },
+  {
+    id: 'adult_ling_1',
+    name: 'Midnight Mulberry Silk & Lace Chemise',
+    category: 'ADULT SECTION',
+    subcategory: 'Lingeries',
+    price: 32000,
+    image: '/images/products/adult_ling_1.png',
+    description: '100% pure Mulberry silk slip adorned with French scalloped Chantilly lace.',
+    size: 'S / M / L / XL'
+  },
+  {
+    id: 'adult_ling_2',
+    name: 'Ethereal Satin Robe with Chantilly Lace Trim',
+    category: 'ADULT SECTION',
+    subcategory: 'Lingeries',
+    price: 36000,
+    image: '/images/products/adult_ling_2.png',
+    description: 'Fluid satin dressing gown with eyelash lace cuffs and satin sash tie belt.',
+    size: 'Free Size'
+  }
+]
+
+const mapProductData = (list) => {
+  if (!Array.isArray(list)) return []
+  return list.map(p => {
+    const priceVal = parseFloat(p.price) || 0
     return {
       id: p.id,
       name: p.name,
-      category: (p.category?.name || p.cat_name || 'T-SHIRTS').toUpperCase(),
+      category: p.category || p.cat_name || 'PERFUMES',
+      subcategory: p.subcategory || '',
       price: priceVal,
       priceFormatted: `${currencySymbol.value}${priceVal.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
-      image: p.image || '/logo.png',
-      colors: parsedColors
+      image: p.image || '/images/products/perf_usa_1.png',
+      description: p.description || '',
+      size: p.size || ''
     }
   })
 }
 
-// Fetch live products during SSR and client render
+const products = ref(mapProductData(defaultCatalogue))
+
+// Fetch live products from Nitro server
 const { data: liveProductsData } = await useAsyncData('shopProductsData', () => $fetch('/api/v1/products'))
 
-if (liveProductsData.value) {
-  const mapped = mapProductData(liveProductsData.value)
-  if (mapped) products.value = mapped
+if (Array.isArray(liveProductsData.value)) {
+  products.value = mapProductData(liveProductsData.value)
 }
 
 const fetchLiveProducts = async () => {
   try {
     await fetchStoreSettings()
     const data = await $fetch('/api/v1/products')
-    const mapped = mapProductData(data)
-    if (mapped) products.value = mapped
+    if (Array.isArray(data)) {
+      products.value = mapProductData(data)
+    }
   } catch (err) {
     console.error('Failed to load products from API:', err)
   }
 }
 
-onMounted(fetchLiveProducts)
+onMounted(() => {
+  fetchLiveProducts()
 
-// Swatch selection - reactive to products
-const activeSwatches = ref({})
-watch(products, (newProds) => {
-  newProds.forEach(p => {
-    if (!activeSwatches.value[p.id]) {
-      activeSwatches.value[p.id] = p.colors?.[0] || 'black'
+  // Sync route query parameter if available (e.g. /shop?cat=OILS)
+  if (route.query.cat) {
+    const queryCat = String(route.query.cat).toUpperCase()
+    const match = categories.find(c => c.toUpperCase() === queryCat)
+    if (match) {
+      activeCategory.value = match
     }
-  })
-}, { immediate: true })
+  }
+  if (route.query.sub) {
+    activeSubcategory.value = String(route.query.sub)
+  }
+})
 
-// Computed filtered products
+// Watch route changes
+watch(() => route.query, (newQ) => {
+  if (newQ.cat) {
+    const match = categories.find(c => c.toUpperCase() === String(newQ.cat).toUpperCase())
+    if (match) activeCategory.value = match
+  }
+  if (newQ.sub) {
+    activeSubcategory.value = String(newQ.sub)
+  }
+})
+
+// Filtered and Sorted Products
 const filteredProducts = computed(() => {
   let list = [...products.value]
 
   // Filter category
   if (activeCategory.value !== 'ALL') {
-    list = list.filter(p => p.category === activeCategory.value)
+    if (activeCategory.value.toUpperCase() === 'FRAGRANCE') {
+      list = list.filter(p => p.category?.toUpperCase() !== 'ADULT SECTION')
+    } else {
+      list = list.filter(p => p.category?.toUpperCase() === activeCategory.value.toUpperCase())
+    }
+  }
+
+  // Filter subcategory
+  if (activeSubcategory.value !== 'ALL') {
+    list = list.filter(p => p.subcategory?.toUpperCase() === activeSubcategory.value.toUpperCase())
   }
 
   // Sorting
@@ -271,21 +653,17 @@ const filteredProducts = computed(() => {
 
 const addToCart = (product) => {
   cartCount.value++
-  
-  const selectedColor = activeSwatches.value[product.id] || product.colors[0]
-  
-  const existingItem = cartItems.value.find(item => item.id === product.id && item.selectedColor === selectedColor)
+  const existingItem = cartItems.value.find(item => item.id === product.id)
   if (existingItem) {
     existingItem.quantity++
   } else {
     cartItems.value.push({
       ...product,
-      quantity: 1,
-      selectedColor
+      quantity: 1
     })
   }
 
-  showToast(`Added "${product.name}" (${selectedColor.toUpperCase()}) to bag.`)
+  showToast(`Added "${product.name}" to your bag.`)
 }
 </script>
 
@@ -298,84 +676,92 @@ const addToCart = (product) => {
 /* ─── Hero Header ─────────────────────────────── */
 .shop-hero {
   position: relative;
-  height: 280px;
-  overflow: hidden;
+  width: 100%;
+  height: 48vh;
+  min-height: 340px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: #ffffff;
+  overflow: hidden;
+  background-color: var(--color-bg-dark);
 }
 
 .shop-hero__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
+  opacity: 0.55;
 }
 
 .shop-hero__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: linear-gradient(to bottom, rgba(17, 17, 17, 0.4) 0%, rgba(17, 17, 17, 0.8) 100%);
 }
 
 .shop-hero__content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  color: var(--color-text-light);
+  max-width: 680px;
   padding: 0 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.shop-hero__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.25em;
+  color: var(--color-accent);
+  margin-bottom: 0.75rem;
+  display: inline-block;
+  font-weight: 600;
+  text-align: center;
 }
 
 .shop-hero__title {
-  font-family: var(--font-serif);
-  font-size: 3rem;
-  font-weight: 400;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.01em;
+  font-size: 3.5rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  width: 100%;
 }
 
 .shop-hero__sub {
-  font-family: var(--font-sans);
-  font-size: 0.9rem;
-  opacity: 0.85;
-  letter-spacing: 0.05em;
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-/* Watermark */
-.img-logo-overlay {
-  position: absolute;
-  width: 70px;
-  opacity: 0.45;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.img-logo-overlay img {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+  text-align: center;
   width: 100%;
-  height: auto;
-  filter: brightness(0) invert(1);
 }
 
-.img-logo-overlay--br {
-  bottom: 1rem;
-  right: 1rem;
-}
-
-/* ─── Toolbar and Filters ──────────────────────── */
+/* ─── Shop Main Content ───────────────────────── */
 .shop-main {
-  padding: 3rem var(--spacing-md) 5rem;
+  padding-top: 3.5rem;
+  padding-bottom: 6rem;
 }
 
+/* Toolbar & Filters */
 .shop-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  padding-bottom: 1.5rem;
-  margin-bottom: 2rem;
+  flex-wrap: wrap;
   gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 }
 
 .shop-filters__categories {
@@ -389,10 +775,10 @@ const addToCart = (product) => {
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.12em;
-  padding: 0.5rem 1.25rem;
+  padding: 0.55rem 1.25rem;
   background-color: transparent;
   color: var(--color-text-muted);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   cursor: pointer;
   transition: all 0.25s ease;
   text-transform: uppercase;
@@ -400,7 +786,7 @@ const addToCart = (product) => {
 
 .shop-filter-btn:hover {
   color: var(--color-text-dark);
-  border-color: rgba(0, 0, 0, 0.2);
+  border-color: rgba(0, 0, 0, 0.3);
 }
 
 .shop-filter-btn--active {
@@ -429,13 +815,79 @@ const addToCart = (product) => {
   font-weight: 600;
   letter-spacing: 0.05em;
   padding: 0.5rem 1.5rem 0.5rem 0.75rem;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   background-color: #ffffff;
   color: var(--color-text-dark);
   outline: none;
   cursor: pointer;
   text-transform: uppercase;
-  border-radius: 0;
+}
+
+/* Subcategories Bar */
+.shop-subcategories-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.25rem;
+  background-color: #f0ece5;
+  border-left: 3px solid var(--color-accent);
+  margin-bottom: 2rem;
+}
+
+.subcat-bar__label {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--color-text-dark);
+}
+
+.subcat-bar__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.subcat-pill {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 0.35rem 0.9rem;
+  background-color: #ffffff;
+  color: var(--color-text-muted);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.subcat-pill:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text-dark);
+}
+
+.subcat-pill--active {
+  background-color: var(--color-accent);
+  color: #ffffff;
+  border-color: var(--color-accent);
+}
+
+/* Adult Notice Banner */
+.adult-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #1a1618;
+  color: #dfb2c4;
+  padding: 0.85rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(223, 178, 196, 0.3);
 }
 
 /* Active Tags */
@@ -443,62 +895,50 @@ const addToCart = (product) => {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .shop-active-tag {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.05);
   font-family: var(--font-sans);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  background-color: #f0f0f0;
-  color: var(--color-text-dark);
-  padding: 0.35rem 0.75rem;
+  padding: 0.35rem 0.85rem;
   text-transform: uppercase;
 }
 
 .shop-active-tag__close {
-  background: none;
-  border: none;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--color-text-muted);
   cursor: pointer;
-  padding: 0;
-  margin-top: -1px;
 }
 
 .shop-clear-all {
-  background: none;
-  border: none;
   font-family: var(--font-sans);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  color: var(--color-accent);
   text-decoration: underline;
   cursor: pointer;
-  color: var(--color-text-muted);
-  padding: 0;
-}
-
-.shop-clear-all:hover {
-  color: var(--color-text-dark);
 }
 
 .shop-results-count {
   font-family: var(--font-sans);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--color-text-muted);
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  letter-spacing: 0.05em;
 }
 
-/* ─── Product Card & Grid ──────────────────────── */
+/* Product Grid */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 3rem 2rem;
+  gap: 2.5rem 1.75rem;
 }
 
 .product-card {
@@ -512,7 +952,7 @@ const addToCart = (product) => {
   width: 100%;
   aspect-ratio: 3/4;
   overflow: hidden;
-  background-color: #ebe7e0;
+  background-color: #1a1917;
 }
 
 .product-card__img {
@@ -526,79 +966,80 @@ const addToCart = (product) => {
   transform: scale(1.05);
 }
 
-/* Chest Logo style */
-.product-card__chest-logo {
+.product-card__subcat-tag {
   position: absolute;
-  top: 38%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 30px;
-  opacity: 0.65;
-  pointer-events: none;
-  z-index: 1;
-  mix-blend-mode: overlay;
-  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  top: 12px;
+  left: 12px;
+  background-color: rgba(18, 18, 18, 0.8);
+  backdrop-filter: blur(4px);
+  color: var(--color-accent);
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.6rem;
+  border-radius: 2px;
+  text-transform: uppercase;
+  z-index: 2;
+  border: 1px solid rgba(218, 178, 126, 0.3);
 }
 
-.product-card__chest-logo img {
-  width: 100%;
-  height: auto;
-  display: block;
+.product-card__size-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-dark);
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.55rem;
+  border-radius: 2px;
+  z-index: 2;
 }
 
-.product-card__chest-logo--dark img {
-  filter: brightness(0);
-}
-
-.product-card__chest-logo--light img {
-  filter: brightness(0) invert(1);
-}
-
-.product-card:hover .product-card__chest-logo {
-  transform: translate(-50%, -50%) scale(1.05);
-}
-
-/* Wishlist Heart Toggle */
 .product-card__wishlist {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background-color: #ffffff;
-  color: var(--color-text-dark);
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  background-color: rgba(255, 255, 255, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 50%;
+  color: var(--color-text-dark);
   z-index: 3;
   transition: all 0.25s ease;
 }
 
 .product-card__wishlist:hover {
+  background-color: #ffffff;
+  color: #e63946;
   transform: scale(1.1);
 }
 
 .product-card__wishlist--active {
-  background-color: #e25c5c !important;
-  color: #ffffff !important;
+  background-color: #ffffff;
+  color: #e63946;
 }
 
-/* Overlay & Quick Add */
+.product-card__wishlist--active svg {
+  fill: #e63946;
+}
+
 .product-card__overlay {
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding-bottom: 1.5rem;
   opacity: 0;
   transition: var(--transition-smooth);
-  z-index: 2;
 }
 
 .product-card:hover .product-card__overlay {
@@ -607,7 +1048,7 @@ const addToCart = (product) => {
 
 .product-card__quick-add {
   background-color: var(--color-text-dark);
-  color: var(--color-text-light);
+  color: #ffffff;
   font-family: var(--font-sans);
   font-size: 0.72rem;
   font-weight: 600;
@@ -616,220 +1057,104 @@ const addToCart = (product) => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  transform: translateY(12px);
-  transition: var(--transition-smooth);
   border: 1px solid var(--color-text-dark);
   cursor: pointer;
-}
-
-.product-card__quick-add:hover {
-  background-color: var(--color-text-light);
-  color: var(--color-text-dark);
+  transform: translateY(12px);
+  transition: var(--transition-smooth);
 }
 
 .product-card:hover .product-card__quick-add {
   transform: translateY(0);
 }
 
-.quick-add-icon {
-  margin-top: -1px;
+.product-card__quick-add:hover {
+  background-color: #ffffff;
+  color: var(--color-text-dark);
 }
 
-/* Card details & Swatches */
+/* Details */
 .product-card__details {
-  padding-top: 1.25rem;
-  text-align: center;
-}
-
-.product-card__swatches {
-  display: flex;
-  justify-content: center;
-  gap: 0.4rem;
-  margin-bottom: 0.6rem;
-}
-
-.swatch {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  position: relative;
-  transition: all 0.2s ease;
-}
-
-.swatch--active::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border: 1px solid var(--color-text-dark);
-  border-radius: 50%;
+  padding-top: 1rem;
 }
 
 .product-card__title {
   font-family: var(--font-serif);
-  font-size: 1.1rem;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.3rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.35rem;
   color: var(--color-text-dark);
-  text-transform: uppercase;
+}
+
+.product-card__desc-snippet {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .product-card__price {
   font-family: var(--font-sans);
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   color: var(--color-accent);
-  font-weight: 500;
+  font-weight: 600;
 }
 
-/* ─── Responsive ──────────────────────────────── */
+/* Empty State */
+.shop-empty {
+  text-align: center;
+  padding: 5rem 0;
+}
 
-/* Tablet */
-@media (max-width: 992px) {
-  .shop-hero {
-    height: 260px;
-  }
+.shop-empty p {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-muted);
+}
 
-  .shop-hero__title {
-    font-size: 2.4rem;
-  }
-
-  .shop-hero__sub {
-    font-size: 0.82rem;
-  }
-
+/* Responsive */
+@media (max-width: 1024px) {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 2.5rem 1.5rem;
+    gap: 2rem 1.25rem;
   }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
-  .shop-hero {
-    height: 210px;
-  }
-
-  .shop-hero__title {
-    font-size: 1.9rem;
-    margin-bottom: 0.35rem;
-  }
-
-  .shop-hero__sub {
-    font-size: 0.75rem;
-    max-width: 300px;
-  }
-
-  .shop-main {
-    padding: 2rem 0 4rem;
-  }
-
-  .shop-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.85rem;
-    padding-bottom: 1.25rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .shop-filters__categories {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 4px;
-  }
-  .shop-filters__categories::-webkit-scrollbar { display: none; }
-
-  .shop-filter-btn {
-    white-space: nowrap;
-    flex-shrink: 0;
-    font-size: 0.65rem;
-    padding: 0.45rem 0.9rem;
-  }
-
-  .shop-sort {
-    align-self: flex-end;
-    border-top: 1px solid rgba(0,0,0,0.06);
-    padding-top: 0.75rem;
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .shop-sort__select {
-    flex: 1;
-    margin-left: 0.5rem;
-  }
-
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.75rem 0.85rem;
+    gap: 1.5rem 1rem;
   }
-
+  .shop-hero__title {
+    font-size: 2.5rem;
+  }
   .product-card__overlay {
     opacity: 1;
     background-color: transparent;
   }
-
   .product-card__quick-add {
     transform: translateY(0);
-    padding: 0.6rem 0.85rem;
-    font-size: 0.62rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  }
-
-  .product-card__title {
-    font-size: 0.88rem;
-    letter-spacing: 0.03em;
-  }
-
-  .product-card__price {
-    font-size: 0.78rem;
-  }
-
-  .shop-results-count {
-    font-size: 0.72rem;
-    margin-bottom: 1rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.65rem;
   }
 }
 
-/* Small Mobile */
 @media (max-width: 480px) {
-  .shop-hero {
-    height: 175px;
+  .shop-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
   }
-
-  .shop-hero__title {
-    font-size: 1.55rem;
+  .shop-sort {
+    width: 100%;
+    justify-content: space-between;
   }
-
-  .shop-hero__sub {
-    font-size: 0.7rem;
-    max-width: 240px;
-  }
-
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem 0.65rem;
-  }
-
   .product-card__title {
-    font-size: 0.8rem;
-  }
-
-  .product-card__price {
-    font-size: 0.72rem;
-  }
-
-  .product-card__quick-add {
-    font-size: 0.58rem;
-    padding: 0.55rem 0.65rem;
-    letter-spacing: 0.05em;
-  }
-
-  .img-logo-overlay {
-    width: 40px;
+    font-size: 0.95rem;
   }
 }
 </style>
